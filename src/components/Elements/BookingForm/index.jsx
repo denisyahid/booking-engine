@@ -18,16 +18,30 @@ const BookingForm = () => {
         setMinDate(todayFormatted);
     }, []);
 
-    const handleForm = (e) => {
-        e.preventDefault();
+    const handleForm = async (e) => {
+
         const datas = {
             checkIn,
             checkOut,
             adult,
             children
         }
+
         console.log(datas)
-    }
+
+        try {
+            const response = await fetch('http://127.0.0.1:8000/booking',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(datas),
+            })
+            console.log('Berhasil');
+        } catch (err) {
+            console.log(err);
+        }
+    };
 
     const handleCheckIn = (e) => {
         setCheckIn(e.target.value);
