@@ -26,7 +26,7 @@ const TestimonialsCarousel = () => {
     const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
     return (
-        <div className='relative bg-gray-100 p-5 rounded-md shadow-sm'>
+        <div className='relative bg-gray-100 p-5  prounded-md shadow-sm'>
             <motion.p
                 key={current}
                 initial={{ opacity: 0, x: 50 }}
@@ -39,14 +39,14 @@ const TestimonialsCarousel = () => {
                 <span className='font-semibold text-gray-800'>{testimonials[current].name}</span>
                 <span className='text-sm text-gray-500'> - {testimonials[current].role}</span>
             </div>
-            <div className='absolute top-1/2 -translate-y-1/2 left-2 flex gap-2'>
+            <div className='absolute top-1/2 -translate-y-1/2 -left-3 flex gap-2'>
                 <button onClick={prev} className='p-2 rounded-full bg-white shadow hover:bg-gray-200'>
-                    ◀
+                    &laquo;
                 </button>
             </div>
-            <div className='absolute top-1/2 -translate-y-1/2 right-2 flex gap-2'>
+            <div className='absolute top-1/2 -translate-y-1/2 -right-3 flex gap-2'>
                 <button onClick={next} className='p-2 rounded-full bg-white shadow hover:bg-gray-200'>
-                    ▶
+                    &raquo;
                 </button>
             </div>
         </div>
