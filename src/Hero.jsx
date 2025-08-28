@@ -23,15 +23,15 @@ export default function Hero() {
     <div>
       {/* HERO */}
       <section
-        className="relative bg-center bg-cover min-h-screen"
+        className="relative bg-center bg-cover flex flex-col justify-end"
         style={{
-          backgroundImage: "url('/images/hero.jpg')",backgroundPosition:"bottom"
+          backgroundImage: "url('/images/hero.jpg')",backgroundPosition:"bottom",height: "700px"
         }}
       >
         {/* layer to darken background for contrast */}
-        <div className="absolute inset-0 bg-black/30"></div>
+        {/* <div className="absolute inset-0 bg-black/30"></div> */}
 
-        <div className=" max-w-6xl mx-auto px-4 md:px-8 py-20">
+        <div className=" max-w-6xl mx-auto px-4 md:px-8">
           {/* Booking bar (centered) */}
           <div className="mx-auto max-w-5xl">
             <div className="bg-black/70 backdrop-blur-sm rounded-xl p-4 md:p-6 shadow-lg border border-black/40">
@@ -55,19 +55,20 @@ export default function Hero() {
                 </div>
 
                 <div>
-                  <label className="block text-xs text-white/80 uppercase mb-2">Check out</label>
+                  <label className="block text-xs text-white/80 uppercase mb-2">Adult</label>
                   <input
-                    type="date"
+                    type="number"
+                    placeholder="2"
                     defaultValue="2025-08-29"
                     className="w-full bg-white rounded-md px-3 py-2 text-sm shadow-sm"
                   />
                 </div>
 
-                <div className="flex gap-3">
+                <div className="flex gap-3 items-end">
                   <div className="flex-1">
-                    <label className="block text-xs text-white/80 uppercase mb-2">Check</label>
-                    <input
-                      type="date"
+                    <label className="block text-xs text-white/80 uppercase mb-2">Children</label>
+                    <input placeholder="1"
+                      type="number"
                       defaultValue="2025-08-29"
                       className="w-full bg-white rounded-md px-3 py-2 text-sm shadow-sm"
                     />
@@ -75,7 +76,7 @@ export default function Hero() {
 
                   <button
                     type="submit"
-                    className="ml-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm whitespace-nowrap"
+                    className="ml-2 bg-blue-600 hover:bg-blue-700 h-10 text-white px-4 py-2 rounded-md text-sm whitespace-nowrap"
                   >
                     CARI
                   </button>
