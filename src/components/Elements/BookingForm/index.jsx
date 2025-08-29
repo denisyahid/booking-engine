@@ -57,7 +57,7 @@ const BookingForm = () => {
     };
 
     return (
-        <div className='bg-black/70 backdrop-blur-sm rounded-t-xl p-4 md:p-6 shadow-lg border border-black/40'>
+        <div className='sticky top-0 z-50 bg-black/70 backdrop-blur-sm max-w-6xl  rounded-xl p-4 md:p-6 md:mx-auto shadow-lg border border-black/40'>
             <form onSubmit={handleForm} action={'/booking'} method='POST' className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end'>
                 <div>
                     <label className='block text-xs text-white/80 uppercase mb-2'>Check in</label>

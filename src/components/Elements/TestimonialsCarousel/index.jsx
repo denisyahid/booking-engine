@@ -26,7 +26,7 @@ const TestimonialsCarousel = () => {
     const prev = () => setCurrent((prev) => (prev - 1 + testimonials.length) % testimonials.length);
 
     return (
-        <div className='relative bg-gray-100 p-5  prounded-md shadow-sm'>
+        <div className='relative bg-white  p-5  prounded-md border rounded-md shadow-lg'>
             <motion.p
                 key={current}
                 initial={{ opacity: 0, x: 50 }}

@@ -6,7 +6,7 @@ export default function Navbar() {
     const links = ['Home', 'Accommodation', 'About Us', 'Gallery', 'Testimonials', 'News', 'Contact Us'];
 
     return (
-        <header className='w-full'>
+        <header className='w-full shadow-md'>
             <div className='bg-white'>
                 <div className='max-w-6xl mx-auto px-4 md:px-8'>
                     <div className='flex items-center justify-between h-28'>
@@ -78,45 +78,6 @@ export default function Navbar() {
                     </div>
                 </div>
             </div>
-
-            {/* Blue nav bar */}
-            <nav className='bg-blue-500'>
-                <div className='max-w-6xl mx-auto px-4 md:px-8'>
-                    <div className='h-14 flex items-center justify-center'>
-                        <ul className='hidden md:flex gap-10 uppercase text-white text-sm tracking-wider'>
-                            {links.map((l) => (
-                                <li key={l} className='py-2 hover:opacity-90 cursor-pointer'>
-                                    {l}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-
-                {/* Mobile dropdown menu */}
-                {open && (
-                    <div className='md:hidden bg-blue-500'>
-                        <div className='px-4 pb-4'>
-                            <ul className='flex flex-col gap-3 uppercase text-white text-sm tracking-wider py-3 border-b border-blue-600'>
-                                {links.map((l) => (
-                                    <li key={l} className='py-2'>
-                                        {l}
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <div className='pt-3'>
-                                <a href='mailto:example@gmail.com' className='block text-white text-sm'>
-                                    example@gmail.com
-                                </a>
-                                <a href='tel:+1800123456789' className='block text-white text-sm'>
-                                    (800) 123 456 789
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </nav>
         </header>
     );
 }
