@@ -19,7 +19,7 @@ export default function Hero() {
     ];
 
     return (
-        <div className='md:py-10 bg-white'>
+        <div className='md:py-5 bg-white'>
             {/* HERO */}
 
             {/* ROOM CARDS */}

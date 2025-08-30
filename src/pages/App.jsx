@@ -11,7 +11,7 @@ import BookingForm from '../components/Elements/BookingForm';
 
 const App = () => {
     return (
-        <div className='bg-slate-100'>
+        <div className='bg-white'>
             <Navbar />
             <BioHotel />
             <BookingForm />
