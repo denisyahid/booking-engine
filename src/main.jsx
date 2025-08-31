@@ -6,10 +6,10 @@ import App from './pages/App.jsx';
 import BookingPage from './pages/Booking/index.jsx';
 
 const router = createBrowserRouter([{
-    path: '/',
+    path: '/:id',
     element: <App />
 },{
-    path: '/booking',
+    path: '/booking/:id',
     element: <BookingPage />
 }]);
 

@@ -1,9 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {useParams} from 'react-router-dom';
+import axios from 'axios';
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
+    const [nameHotel,setNameHotel] = useState('');
+    const {id} = useParams();
 
-    const links = ['Home', 'Accommodation', 'About Us', 'Gallery', 'Testimonials', 'News', 'Contact Us'];
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/hotel/${id}`)
+        .then((res) => {
+            setNameHotel(res.data.data.name);
+            // console.log(res.data.data.name);
+        })
+    },[])
+
+    if(!nameHotel) return <p>Loading..</p>
 
     return (
         <header className='w-full shadow-md'>
@@ -27,9 +39,7 @@ export default function Navbar() {
                         {/* Center logo/title */}
                         <div className='flex-1 text-center'>
                             <h1 className='font-serif text-3xl md:text-4xl leading-tight'>
-                                My
-                                <br />
-                                Hotel
+                                {nameHotel}
                             </h1>
                         </div>
 

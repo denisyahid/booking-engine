@@ -1,26 +1,32 @@
 import { useEffect, useState } from 'react';
 import { FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 import { FaFacebook, FaInstagram, FaYoutube, FaTiktok, FaGlobe } from 'react-icons/fa';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
 export default function HotelCard() {
-    const [hotel, setHotel] = useState(null);
+    const [hotelName, setHotelName] = useState(null);
+    const [hotelAddress, setHotelAdress] = useState(null);
     const [showMore, setShowMore] = useState(false);
+    const {id} = useParams();
 
-    //   useEffect(() => {
-    //     fetch("http://127.0.0.1:8000/api/hotel")
-    //       .then((res) => res.json())
-    //       .then((data) => setHotel(data));
-    //   }, []);
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/hotel/${id}`)
+            .then((res) =>{
+                setHotelName(res.data.data.name);
+                setHotelAdress(res.data.data.address);
+            })
+    }, []);
 
     //   if (!hotel) return <p>Loading...</p>;
 
     return (
         <div className='bg-slate-100 md:py-10'>
             <div className='max-w-6xl mx-auto bg-white p-6 rounded-2xl border shadow-lg my-10'>
-                <h2 className='text-2xl font-bold'>My Hotel</h2>
+                <h2 className='text-2xl font-bold'>{hotelName}</h2>
                 <div className='flex items-center gap-2 text-gray-600 mt-1'>
                     <FaMapMarkerAlt className='text-blue-500' />
-                    <span>Jakarta</span>
+                    <span>{hotelAddress}</span>
                     <span className='ml-3 flex text-yellow-400'>
                         {/* {Array.from({ length: hotel.rating }).map((_, i) => (
             <FaStar key={i} />

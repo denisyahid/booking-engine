@@ -1,7 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from "react-router-dom";
+import axios from 'axios';
+
 
 export default function BookingForm() {
     const [guestType, setGuestType] = useState('self');
+    const [room, setRoom] = useState([]);
+    const [facility,setFacility] = useState([]);
+    const [loading,setLoading] = useState(false);
+    const { id } = useParams();
+    
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/room/${id}`)
+        .then((res) => {
+            setRoom(res.data)
+            setLoading(true);
+            console.log(res.data)
+        })
+    },[])
+
+   useEffect(() => {
+  axios.get(`http://127.0.0.1:8000/api/facilities/${id}`)
+    .then((res) => {
+      const datas = JSON.parse(res.data.facility_name); 
+      setFacility(datas.join(", "));
+    })
+    .catch((err) => console.error(err));
+}, []);
+
+
+     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+     if(!loading) return <p>Loading..</p>
 
     return (
         <div className='min-h-screen bg-gray-100 flex justify-center py-6 px-3'>
@@ -10,7 +41,7 @@ export default function BookingForm() {
                 <div className='bg-blue-800 text-white p-5 text-center text-xl font-semibold'>Your Accommodation Booking</div>
 
                 {/* Content */}
-                <form method='POST'  className='grid md:grid-cols-3 gap-6 p-6'>
+                <form method='POST' className='grid md:grid-cols-3 gap-6 p-6'>
                     {/* Left Content */}
                     <div className='md:col-span-2 space-y-6'>
                         {/* Contact Details */}
@@ -48,16 +79,16 @@ export default function BookingForm() {
 
                         {/* Stay Details */}
                         <div className='border rounded-xl p-5 shadow-sm space-y-4'>
-                            <h2 className='font-semibold text-lg'>Stay Details at Nata Azana Hotel Solo</h2>
+                            <h2 className='font-semibold text-lg'>Stay Details at {`${room.hotel.name}`}</h2>
                             <p className='text-sm text-gray-500'>For smoother check-in, enter the guest’s name as written on ID card.</p>
 
                             <div className='space-y-2'>
                                 <p className='font-medium'>Room Only (1x)</p>
                                 <ul className='list-disc ml-5 text-sm text-gray-600 space-y-1'>
-                                    <li>1 Guest</li>
+                                    <li>{`${room.capacity}`} Guest</li>
                                     <li>Bedroom: 2 Single Bed, Bathrooms: 1 Private</li>
-                                    <li>Free Netflix, WiFi, Air Conditioning, Bottled Water, etc.</li>
-                                    <li>Non-Smoking Room</li>
+                                    <li>{facility}</li>
+                                    {!room.smoking_policy && (<li>Non-Smoking Room</li>)}
                                 </ul>
                             </div>
 
@@ -90,16 +121,16 @@ export default function BookingForm() {
                         {/* Booking Summary */}
                         <div className='border rounded-xl shadow-sm overflow-hidden'>
                             <img
-                                src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80'
+                                src={`http://127.0.0.1:8000/storage/${room.image}`}
                                 alt='Hotel Room'
                                 className='w-full h-40 object-cover'
                             />
                             <div className='p-4 space-y-2'>
-                                <h3 className='font-semibold'>Nata Azana Hotel Solo</h3>
+                                <h3 className='font-semibold'>{room.name}</h3>
                                 <p className='text-sm text-gray-600'>
                                     Friday, 29/8/2025 - Saturday, 30/8/2025 <br />1 Night • 1 Room • 1 Guest
                                 </p>
-                                <p className='text-right font-bold text-blue-700'>IDR 618.000</p>
+                                <p className='text-right font-bold text-blue-700'>{formatRupiah(room.rate)}</p>
                             </div>
                         </div>
 
@@ -116,7 +147,7 @@ export default function BookingForm() {
                         <div className='border rounded-xl p-4 shadow-sm space-y-4'>
                             <div className='flex justify-between text-lg font-semibold'>
                                 <span>Total</span>
-                                <span className='text-blue-700'>IDR 618.000</span>
+                                <span className='text-blue-700'>{formatRupiah(room.rate)}</span>
                             </div>
                             <button className='w-full bg-blue-700 text-white py-3 rounded-xl text-lg font-semibold hover:bg-blue-800 transition'>
                                 Continue To Payment
