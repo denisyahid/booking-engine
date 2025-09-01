@@ -1,38 +1,99 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from "react-router-dom";
+import { data, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
-
 
 export default function BookingForm() {
     const [guestType, setGuestType] = useState('self');
     const [room, setRoom] = useState([]);
-    const [facility,setFacility] = useState([]);
-    const [loading,setLoading] = useState(false);
+    const [rates, setRates] = useState({});
+    const [facility, setFacility] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [bookingData, setBookingData] = useState({
+        checkIn: '',
+        checkOut: '',
+        adult: 0,
+        children: 0,
+    });
     const { id } = useParams();
-    
+    const location = useLocation();
+    const bookingUrl = location.state || {};
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios
+            .post('http://127.0.0.1:8000/api/post/booking', {
+                room_id: room.id,
+                title: e.target.title.value,
+                fullname: e.target.fullname.value,
+                email: e.target.email.value,
+                mobile_number: e.target.mobileNumber.value,
+                special_request: e.target.specialRequest.value,
+            })
+            .then((res) => console.log(res.data))
+            .catch((err) => console.error(err));
+    };
+
+    function getDayName(dateString) {
+        // Pastikan input adalah string dalam format YYYY-MM-DD
+        if (!dateString || typeof dateString !== 'string') {
+            return 'Invalid Date';
+        }
+
+        // Buat objek Date dari string
+        const dateObject = new Date(dateString);
+
+        // Jika tanggal tidak valid (misal: '2025-02-30')
+        if (isNaN(dateObject.getTime())) {
+            return 'Invalid Date';
+        }
+
+        // Opsi untuk nama hari panjang
+        const options = { weekday: 'long' };
+
+        // Dapatkan nama hari dalam bahasa Indonesia
+        const dayName = new Intl.DateTimeFormat('id-ID', options).format(dateObject);
+
+        return dayName;
+    }
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/room/${id}`)
-        .then((res) => {
-            setRoom(res.data)
+        const params = new URLSearchParams(location.search);
+
+        // Memperbarui state dengan nilai dari URL
+        setBookingData({
+            checkIn: bookingUrl.checkIn,
+            checkOut: bookingUrl.checkOut,
+            adult: bookingUrl.adult,
+            children: bookingUrl.children,
+        });
+    }, [location.search]);
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/room/${id}`).then((res) => {
+            setRoom(res.data);
             setLoading(true);
-            console.log(res.data)
-        })
-    },[])
+        });
+    }, []);
 
-   useEffect(() => {
-  axios.get(`http://127.0.0.1:8000/api/facilities/${id}`)
-    .then((res) => {
-      const datas = JSON.parse(res.data.facility_name); 
-      setFacility(datas.join(", "));
-    })
-    .catch((err) => console.error(err));
-}, []);
+    useEffect(() => {
+        axios
+            .get(`http://127.0.0.1:8000/api/facilities/${id}`)
+            .then((res) => {
+                const datas = JSON.parse(res.data.facility_name);
+                setFacility(datas.join(', '));
+            })
+            .catch((err) => console.error(err));
+    }, []);
 
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/rate/${bookingUrl.bookingId}`).then((res) => {
+            setRates(res.data);
+        });
+    }, []);
 
-     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-     if(!loading) return <p>Loading..</p>
+    if (!loading) return <p>Loading..</p>;
 
     return (
         <div className='min-h-screen bg-gray-100 flex justify-center py-6 px-3'>
@@ -41,31 +102,31 @@ export default function BookingForm() {
                 <div className='bg-blue-800 text-white p-5 text-center text-xl font-semibold'>Your Accommodation Booking</div>
 
                 {/* Content */}
-                <form method='POST' className='grid md:grid-cols-3 gap-6 p-6'>
+                <form onSubmit={handleSubmit} className='grid md:grid-cols-3 gap-6 p-6'>
                     {/* Left Content */}
                     <div className='md:col-span-2 space-y-6'>
                         {/* Contact Details */}
                         <div className='border rounded-xl p-5 space-y-4 shadow-sm'>
                             <h2 className='font-semibold text-lg'>Contact Details</h2>
                             <div className='grid md:grid-cols-2 gap-4'>
-                                <select className='border rounded-lg p-2'>
+                                <select name='title' className='border rounded-lg p-2'>
                                     <option>Mr.</option>
                                     <option>Mrs.</option>
                                     <option>Ms.</option>
                                 </select>
-                                <input type='text' placeholder='Full Name' className='border rounded-lg p-2' />
-                                <input type='email' placeholder='Email Address' className='border rounded-lg p-2 col-span-2' />
+                                <input name='fullname' type='text' placeholder='Full Name' className='border rounded-lg p-2' />
+                                <input name='email' type='email' placeholder='Email Address' className='border rounded-lg p-2 col-span-2' />
                                 <div className='flex col-span-2 gap-2'>
                                     <select className='border rounded-lg p-2 w-28'>
                                         <option>+62</option>
                                         <option>+60</option>
                                         <option>+65</option>
                                     </select>
-                                    <input type='tel' placeholder='Mobile Number' className='border rounded-lg p-2 flex-1' />
+                                    <input name='mobileNumber' type='tel' placeholder='Mobile Number' className='border rounded-lg p-2 flex-1' />
                                 </div>
                             </div>
 
-                            <div className='flex items-center gap-4 text-sm'>
+                            {/* <div className='flex items-center gap-4 text-sm'>
                                 <label className='flex items-center gap-1'>
                                     <input type='radio' name='guest' checked={guestType === 'self'} onChange={() => setGuestType('self')} />
                                     I'm the guest
@@ -74,7 +135,7 @@ export default function BookingForm() {
                                     <input type='radio' name='guest' checked={guestType === 'other'} onChange={() => setGuestType('other')} />
                                     I'm booking for another person
                                 </label>
-                            </div>
+                            </div> */}
                         </div>
 
                         {/* Stay Details */}
@@ -83,16 +144,22 @@ export default function BookingForm() {
                             <p className='text-sm text-gray-500'>For smoother check-in, enter the guest’s name as written on ID card.</p>
 
                             <div className='space-y-2'>
-                                <p className='font-medium'>Room Only (1x)</p>
+                                <p className='font-medium'>{rates.plan}</p>
                                 <ul className='list-disc ml-5 text-sm text-gray-600 space-y-1'>
                                     <li>{`${room.capacity}`} Guest</li>
-                                    <li>Bedroom: 2 Single Bed, Bathrooms: 1 Private</li>
-                                    <li>{facility}</li>
-                                    {!room.smoking_policy && (<li>Non-Smoking Room</li>)}
+                                    <li>{`${bookingData.adult}`} Adult</li>
+                                    <li>{`${bookingData.children}`} Children</li>
+                                    <li>{facility && 'None'}</li>
+                                    {!room.smoking_policy && <li>Non-Smoking Room</li>}
                                 </ul>
                             </div>
 
-                            <textarea className='border rounded-lg p-2 w-full' placeholder='Any special requests or needs?' rows={3} />
+                            <textarea
+                                name='specialRequest'
+                                className='border rounded-lg p-2 w-full'
+                                placeholder='Any special requests or needs?'
+                                rows={3}
+                            />
                         </div>
 
                         {/* Policy */}
@@ -107,10 +174,10 @@ export default function BookingForm() {
                             <h2 className='font-semibold text-lg'>Accommodation Policies</h2>
                             <div className='flex justify-between text-sm text-gray-700 mt-2'>
                                 <p>
-                                    Check-In: <span className='font-medium'>14:00 Local Time</span>
+                                    Check-In: <span className='font-medium'>{bookingData.checkIn}</span>
                                 </p>
                                 <p>
-                                    Check-Out: <span className='font-medium'>12:00 Local Time</span>
+                                    Check-Out: <span className='font-medium'>{bookingData.checkOut}</span>
                                 </p>
                             </div>
                         </div>
@@ -120,28 +187,25 @@ export default function BookingForm() {
                     <div className='space-y-6'>
                         {/* Booking Summary */}
                         <div className='border rounded-xl shadow-sm overflow-hidden'>
-                            <img
-                                src={`http://127.0.0.1:8000/storage/${room.image}`}
-                                alt='Hotel Room'
-                                className='w-full h-40 object-cover'
-                            />
+                            <img src={`http://127.0.0.1:8000/storage/${room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
                             <div className='p-4 space-y-2'>
                                 <h3 className='font-semibold'>{room.name}</h3>
                                 <p className='text-sm text-gray-600'>
-                                    Friday, 29/8/2025 - Saturday, 30/8/2025 <br />1 Night • 1 Room • 1 Guest
+                                    {getDayName(bookingData.checkIn)} {bookingData.checkIn} - {getDayName(bookingData.checkOut)}{' '}
+                                    {bookingData.checkOut} <br />1 Night • 1 Room • {room.capacity} Guest
                                 </p>
                                 <p className='text-right font-bold text-blue-700'>{formatRupiah(room.rate)}</p>
                             </div>
                         </div>
 
                         {/* Coupon */}
-                        <div className='border rounded-xl p-4 shadow-sm space-y-2'>
+                        {/* <div className='border rounded-xl p-4 shadow-sm space-y-2'>
                             <h2 className='font-semibold text-lg'>Apply Coupons</h2>
                             <div className='flex gap-2'>
                                 <input type='text' placeholder='Enter coupon' className='border rounded-lg p-2 flex-1' />
                                 <button className='bg-blue-700 text-white px-4 rounded-lg hover:bg-blue-800'>Apply</button>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Total */}
                         <div className='border rounded-xl p-4 shadow-sm space-y-4'>
@@ -149,7 +213,9 @@ export default function BookingForm() {
                                 <span>Total</span>
                                 <span className='text-blue-700'>{formatRupiah(room.rate)}</span>
                             </div>
-                            <button className='w-full bg-blue-700 text-white py-3 rounded-xl text-lg font-semibold hover:bg-blue-800 transition'>
+                            <button
+                                type='submit'
+                                className='w-full bg-blue-700 text-white py-3 rounded-xl text-lg font-semibold hover:bg-blue-800 transition'>
                                 Continue To Payment
                             </button>
                         </div>
