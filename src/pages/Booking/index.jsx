@@ -4,7 +4,7 @@ import BookingForm from "../../components/Fragments/BookingForm";
 const BookingPage = () => {
    
     return (
-        <BookingForm />
+            <BookingForm />
     )
 }
 

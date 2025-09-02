@@ -3,8 +3,8 @@ import { data, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export default function BookingForm() {
-    const [guestType, setGuestType] = useState('self');
-    const [room, setRoom] = useState([]);
+    // const [guestType, setGuestType] = useState('self');
+    const [room, setRoom] = useState({});
     const [rates, setRates] = useState({});
     const [facility, setFacility] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -31,6 +31,41 @@ export default function BookingForm() {
             })
             .then((res) => console.log(res.data))
             .catch((err) => console.error(err));
+    };
+
+    const handlePayment = async (e) => {
+        e.preventDefault();
+        const form = e.target;
+
+        try {
+            const res = await axios.post('http://127.0.0.1:8000/api/payment', {
+                gross_amount: rates.rate,
+                fullname: form.fullname.value,
+                email: form.email.value,
+                mobile_number: form.mobileNumber.value,
+                special_request: form.specialRequest.value,
+            });
+
+            const token = res.data.token;
+
+            // Panggil Midtrans Snap
+            window.snap.pay(token, {
+                onSuccess: (result) => {
+                    console.log('Success:', result);
+                },
+                onPending: (result) => {
+                    console.log('Pending:', result);
+                },
+                onError: (result) => {
+                    console.log('Error:', result);
+                },
+                onClose: () => {
+                    alert('Payment popup closed');
+                },
+            });
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     function getDayName(dateString) {
@@ -70,26 +105,26 @@ export default function BookingForm() {
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/room/${id}`).then((res) => {
-            setRoom(res.data);
+            setRates(res.data);
             setLoading(true);
         });
     }, []);
 
-    useEffect(() => {
-        axios
-            .get(`http://127.0.0.1:8000/api/facilities/${id}`)
-            .then((res) => {
-                const datas = JSON.parse(res.data.facility_name);
-                setFacility(datas.join(', '));
-            })
-            .catch((err) => console.error(err));
-    }, []);
+    // useEffect(() => {
+    //     axios
+    //         .get(`http://127.0.0.1:8000/api/facilities/${id}`)
+    //         .then((res) => {
+    //             const datas = JSON.parse(res.data.facility_name);
+    //             setFacility(datas.join(', '));
+    //         })
+    //         .catch((err) => console.error(err));
+    // }, []);
 
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/rate/${bookingUrl.bookingId}`).then((res) => {
-            setRates(res.data);
-        });
-    }, []);
+    // useEffect(() => {
+    //     axios.get(`http://127.0.0.1:8000/api/rate/${bookingUrl.bookingId}`).then((res) => {
+    //         setRates(res.data);
+    //     });
+    // }, []);
 
     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
@@ -102,7 +137,8 @@ export default function BookingForm() {
                 <div className='bg-blue-800 text-white p-5 text-center text-xl font-semibold'>Your Accommodation Booking</div>
 
                 {/* Content */}
-                <form onSubmit={handleSubmit} className='grid md:grid-cols-3 gap-6 p-6'>
+                <form onSubmit={handlePayment} className='grid md:grid-cols-3 gap-6 p-6'>
+                    <input type='hidden' name='total' value={rates.rate} />
                     {/* Left Content */}
                     <div className='md:col-span-2 space-y-6'>
                         {/* Contact Details */}
@@ -140,17 +176,17 @@ export default function BookingForm() {
 
                         {/* Stay Details */}
                         <div className='border rounded-xl p-5 shadow-sm space-y-4'>
-                            <h2 className='font-semibold text-lg'>Stay Details at {`${room.hotel.name}`}</h2>
+                            <h2 className='font-semibold text-lg'>Stay Details at {`${rates.room.hotel.name}`}</h2>
                             <p className='text-sm text-gray-500'>For smoother check-in, enter the guest’s name as written on ID card.</p>
 
                             <div className='space-y-2'>
                                 <p className='font-medium'>{rates.plan}</p>
                                 <ul className='list-disc ml-5 text-sm text-gray-600 space-y-1'>
-                                    <li>{`${room.capacity}`} Guest</li>
+                                    <li>{`${rates.room.capacity}`} Guest</li>
                                     <li>{`${bookingData.adult}`} Adult</li>
                                     <li>{`${bookingData.children}`} Children</li>
                                     <li>{facility && 'None'}</li>
-                                    {!room.smoking_policy && <li>Non-Smoking Room</li>}
+                                    {!rates.smoking_policy && <li>Non-Smoking Room</li>}
                                 </ul>
                             </div>
 
@@ -187,14 +223,14 @@ export default function BookingForm() {
                     <div className='space-y-6'>
                         {/* Booking Summary */}
                         <div className='border rounded-xl shadow-sm overflow-hidden'>
-                            <img src={`http://127.0.0.1:8000/storage/${room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
+                            <img src={`http://127.0.0.1:8000/storage/${rates.room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
                             <div className='p-4 space-y-2'>
-                                <h3 className='font-semibold'>{room.name}</h3>
+                                <h3 className='font-semibold'>{rates.room.name}</h3>
                                 <p className='text-sm text-gray-600'>
                                     {getDayName(bookingData.checkIn)} {bookingData.checkIn} - {getDayName(bookingData.checkOut)}{' '}
-                                    {bookingData.checkOut} <br />1 Night • 1 Room • {room.capacity} Guest
+                                    {bookingData.checkOut} <br />1 Night • 1 Room • {rates.room.capacity} Guest
                                 </p>
-                                <p className='text-right font-bold text-blue-700'>{formatRupiah(room.rate)}</p>
+                                <p className='text-right font-bold text-blue-700'>{formatRupiah(rates.rate)}</p>
                             </div>
                         </div>
 
@@ -211,7 +247,7 @@ export default function BookingForm() {
                         <div className='border rounded-xl p-4 shadow-sm space-y-4'>
                             <div className='flex justify-between text-lg font-semibold'>
                                 <span>Total</span>
-                                <span className='text-blue-700'>{formatRupiah(room.rate)}</span>
+                                <span className='text-blue-700'>{formatRupiah(rates.rate)}</span>
                             </div>
                             <button
                                 type='submit'

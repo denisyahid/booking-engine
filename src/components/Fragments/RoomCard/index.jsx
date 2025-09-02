@@ -6,44 +6,6 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export default function RoomCard({ checkIn, checkOut, adult, children, handleBook, rooms, loading, roomRates, roomFacilities, formatRupiah }) {
-    // const [rooms, setRooms] = useState([]);
-    // const [roomFacilities, setRoomFacilities] = useState([]);
-    // const [roomRates, setRoomRates] = useState([]);
-    // const [loading, setLoading] = useState(true);
-    // const { slug } = useParams();
-
-    // useEffect(() => {
-    //     axios
-    //         .get(`http://127.0.0.1:8000/api/${slug}/rooms`)
-    //         .then((res) => {
-    //             setRooms(res.data);
-    //             setLoading(false);
-    //         })
-    //         .catch((err) => {
-    //             setLoading(false);
-    //         });
-    // }, []);
-
-    // useEffect(() => {
-    //     axios
-    //         .get(`http://127.0.0.1:8000/api/facilities`)
-    //         .then((data) => {
-    //             let facilities = JSON.parse(data.facility_name);
-    //             setRoomFacilities(facilities);
-    //             setLoading(false);
-    //         })
-    //         .catch((err) => {
-    //             setLoading(false);
-    //         });
-    // }, []);
-
-    // useEffect(() => {
-    //     axios.get(`http://127.0.0.1:8000/api/rate`).then((res) => {
-    //         setRoomRates(res.data);
-    //     });
-    // }, []);
-
-    // const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
     if (loading) return <p>Loading...</p>;
 
