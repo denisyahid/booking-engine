@@ -18,7 +18,7 @@ const BookingForm = () => {
         setMinDate(todayFormatted);
     }, []);
 
-    const handleForm = async (e) => {
+    const handleForm = async () => {
 
         const datas = {
             checkIn,
@@ -65,7 +65,6 @@ const BookingForm = () => {
                         onChange={handleCheckIn}
                         min={minDate}
                         type='date'
-                        defaultValue='2025-08-28'
                         className='w-full bg-white rounded-md px-3 py-2 text-sm shadow-sm'
                     />
                 </div>
@@ -76,7 +75,6 @@ const BookingForm = () => {
                         onChange={handleCheckOut}
                         min={minDate}
                         type='date'
-                        defaultValue='2025-08-29'
                         className='w-full bg-white rounded-md px-3 py-2 text-sm shadow-sm'
                     />
                 </div>
