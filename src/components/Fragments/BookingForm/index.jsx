@@ -110,15 +110,16 @@ export default function BookingForm() {
         });
     }, []);
 
-    // useEffect(() => {
-    //     axios
-    //         .get(`http://127.0.0.1:8000/api/facilities/${id}`)
-    //         .then((res) => {
-    //             const datas = JSON.parse(res.data.facility_name);
-    //             setFacility(datas.join(', '));
-    //         })
-    //         .catch((err) => console.error(err));
-    // }, []);
+    useEffect(() => {
+        axios
+            .get(`http://127.0.0.1:8000/api/facilities/${id}`)
+            .then((res) => {
+                const datas = JSON.parse(res.data.facility_name);
+                console.log(datas);
+                setFacility(datas.join(', '));
+            })
+            .catch((err) => console.error(err));
+    }, []);
 
     // useEffect(() => {
     //     axios.get(`http://127.0.0.1:8000/api/rate/${bookingUrl.bookingId}`).then((res) => {
@@ -185,7 +186,7 @@ export default function BookingForm() {
                                     <li>{`${rates.room.capacity}`} Guest</li>
                                     <li>{`${bookingData.adult}`} Adult</li>
                                     <li>{`${bookingData.children}`} Children</li>
-                                    <li>{facility && 'None'}</li>
+                                    <li>{facility ? facility : 'None'}</li>
                                     {!rates.smoking_policy && <li>Non-Smoking Room</li>}
                                 </ul>
                             </div>
