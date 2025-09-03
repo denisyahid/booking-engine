@@ -3,7 +3,8 @@ import { data, useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export default function BookingForm() {
-    // const [guestType, setGuestType] = useState('self');
+    const [checkIn, setCheckIn] = useState('');
+    const [checkOut, setCheckOut] = useState('');
     const [room, setRoom] = useState({});
     const [rates, setRates] = useState({});
     const [facility, setFacility] = useState([]);
@@ -31,6 +32,14 @@ export default function BookingForm() {
             })
             .then((res) => console.log(res.data))
             .catch((err) => console.error(err));
+    };
+
+    const handleCheckIn = (e) => {
+        setCheckIn(e.target.value);
+    };
+
+    const handleCheckOut = (e) => {
+        setCheckOut(e.target.value);
     };
 
     const handlePayment = async (e) => {
@@ -101,6 +110,9 @@ export default function BookingForm() {
             adult: bookingUrl.adult,
             children: bookingUrl.children,
         });
+
+        setCheckIn(bookingUrl.checkIn);
+        setCheckOut(bookingUrl.checkOut);
     }, [location.search]);
 
     useEffect(() => {
@@ -115,7 +127,6 @@ export default function BookingForm() {
             .get(`http://127.0.0.1:8000/api/facilities/${id}`)
             .then((res) => {
                 const datas = JSON.parse(res.data.facility_name);
-                console.log(datas);
                 setFacility(datas.join(', '));
             })
             .catch((err) => console.error(err));
@@ -162,6 +173,37 @@ export default function BookingForm() {
                                     <input name='mobileNumber' type='tel' placeholder='Mobile Number' className='border rounded-lg p-2 flex-1' />
                                 </div>
                             </div>
+
+                            {!bookingData.checkIn && (
+                                <div className='flex gap-4'>
+                                    <div className='w-1/2 flex flex-col'>
+                                        <label className='font-semibold mb-1' htmlFor='checkIn'>
+                                            Check In
+                                        </label>
+                                        <input
+                                            onChange={handleCheckIn}
+                                            value={checkIn}
+                                            type='date'
+                                            name='checkIn'
+                                            id='checkIn'
+                                            className='border rounded-lg p-2'
+                                        />
+                                    </div>
+                                    <div className='w-1/2 flex flex-col'>
+                                        <label className='font-semibold mb-1' htmlFor='checkOut'>
+                                            Check Out
+                                        </label>
+                                        <input
+                                            onChange={handleCheckOut}
+                                            value={checkOut}
+                                            type='date'
+                                            name='checkOut'
+                                            id='checkOut'
+                                            className='border rounded-lg p-2'
+                                        />
+                                    </div>
+                                </div>
+                            )}
 
                             {/* <div className='flex items-center gap-4 text-sm'>
                                 <label className='flex items-center gap-1'>
@@ -211,10 +253,10 @@ export default function BookingForm() {
                             <h2 className='font-semibold text-lg'>Accommodation Policies</h2>
                             <div className='flex justify-between text-sm text-gray-700 mt-2'>
                                 <p>
-                                    Check-In: <span className='font-medium'>{bookingData.checkIn}</span>
+                                    Check-In: <span className='font-medium'>{checkIn}</span>
                                 </p>
                                 <p>
-                                    Check-Out: <span className='font-medium'>{bookingData.checkOut}</span>
+                                    Check-Out: <span className='font-medium'>{checkOut}</span>
                                 </p>
                             </div>
                         </div>
@@ -228,8 +270,8 @@ export default function BookingForm() {
                             <div className='p-4 space-y-2'>
                                 <h3 className='font-semibold'>{rates.room.name}</h3>
                                 <p className='text-sm text-gray-600'>
-                                    {getDayName(bookingData.checkIn)} {bookingData.checkIn} - {getDayName(bookingData.checkOut)}{' '}
-                                    {bookingData.checkOut} <br />1 Night • 1 Room • {rates.room.capacity} Guest
+                                    {getDayName(checkIn)} {checkIn} - {getDayName(checkOut)} {checkOut} <br />1 Night • 1 Room • {rates.room.capacity}{' '}
+                                    Guest
                                 </p>
                                 <p className='text-right font-bold text-blue-700'>{formatRupiah(rates.rate)}</p>
                             </div>

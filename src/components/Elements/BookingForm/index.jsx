@@ -62,7 +62,7 @@ const BookingForm = ({ checkIn, checkOut, adult, children, setCheckIn, setChecko
                     </button>
                 </div>
             </form>
-            {!checkIn || !checkOut || adult <= 0 ? <p className='mt-2 text-red-600'>Harap isi formulir di atas!</p> : null}
+            {/* {!checkIn || !checkOut || adult <= 0 ? <p className='mt-2 text-red-600'>Harap isi formulir di atas!</p> : null} */}
         </div>
     );
 };
