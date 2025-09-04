@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {useParams} from 'react-router-dom';
+import axios from 'axios';
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
+    const [hotel,setHotel] = useState({}); 
+    const {slug} = useParams();
 
-    const links = ['Home', 'Accommodation', 'About Us', 'Gallery', 'Testimonials', 'News', 'Contact Us'];
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/hotel/${slug}`).then((res) => {
+            setHotel(res.data);
+        });
+    }, []);
+
+
+    if(!hotel.name) return <p>Loading..</p>
 
     return (
-        <header className='w-full'>
+        <header className='w-full shadow-md'>
             <div className='bg-white'>
                 <div className='max-w-6xl mx-auto px-4 md:px-8'>
                     <div className='flex items-center justify-between h-28'>
@@ -20,16 +31,14 @@ export default function Navbar() {
                                 />
                             </svg>
                             <a href='mailto:example@gmail.com' className='text-gray-800 tracking-wide'>
-                                example@gmail.com
+                                {hotel.email}
                             </a>
                         </div>
 
                         {/* Center logo/title */}
                         <div className='flex-1 text-center'>
                             <h1 className='font-serif text-3xl md:text-4xl leading-tight'>
-                                My
-                                <br />
-                                Hotel
+                                {hotel.name}
                             </h1>
                         </div>
 
@@ -43,11 +52,11 @@ export default function Navbar() {
                                     d='M3 5a2 2 0 012-2h2.6a1 1 0 01.97.757l.6 2.4a1 1 0 01-.217.9L8.5 9.6a11.042 11.042 0 005.9 5.9l1.543-1.043a1 1 0 01.9-.217l2.4.6A1 1 0 0121 17.4V20a2 2 0 01-2 2A19 19 0 013 5z'
                                 />
                             </svg>
-                            <span className='text-gray-800 tracking-wide'>(800) 123 456 789</span>
+                            <span className='text-gray-800 tracking-wide'>{hotel.telephone}</span>
                         </div>
 
                         {/* Mobile controls: hamburger */}
-                        <div className='md:hidden flex items-center space-x-2'>
+                        {/* <div className='md:hidden flex items-center space-x-2'>
                             <button
                                 onClick={() => setOpen(!open)}
                                 aria-label='Toggle navigation'
@@ -62,7 +71,7 @@ export default function Navbar() {
                                     </svg>
                                 )}
                             </button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
 
@@ -70,53 +79,14 @@ export default function Navbar() {
                 <div className='md:hidden border-t'>
                     <div className='max-w-6xl mx-auto px-4 py-2 flex items-center justify-between'>
                         <a href='mailto:example@gmail.com' className='text-sm'>
-                            example@gmail.com
+                            {hotel.email}
                         </a>
                         <a href='tel:+1800123456789' className='text-sm'>
-                            (800) 123 456 789
+                            {hotel.telephone}
                         </a>
                     </div>
                 </div>
             </div>
-
-            {/* Blue nav bar */}
-            <nav className='bg-blue-500'>
-                <div className='max-w-6xl mx-auto px-4 md:px-8'>
-                    <div className='h-14 flex items-center justify-center'>
-                        <ul className='hidden md:flex gap-10 uppercase text-white text-sm tracking-wider'>
-                            {links.map((l) => (
-                                <li key={l} className='py-2 hover:opacity-90 cursor-pointer'>
-                                    {l}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                </div>
-
-                {/* Mobile dropdown menu */}
-                {open && (
-                    <div className='md:hidden bg-blue-500'>
-                        <div className='px-4 pb-4'>
-                            <ul className='flex flex-col gap-3 uppercase text-white text-sm tracking-wider py-3 border-b border-blue-600'>
-                                {links.map((l) => (
-                                    <li key={l} className='py-2'>
-                                        {l}
-                                    </li>
-                                ))}
-                            </ul>
-
-                            <div className='pt-3'>
-                                <a href='mailto:example@gmail.com' className='block text-white text-sm'>
-                                    example@gmail.com
-                                </a>
-                                <a href='tel:+1800123456789' className='block text-white text-sm'>
-                                    (800) 123 456 789
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </nav>
         </header>
     );
 }

@@ -1,70 +1,19 @@
-import React, { useState, useEffect } from 'react';
 
-const BookingForm = () => {
-    const [minDate, setMinDate] = useState('');
-    const [checkIn, setCheckIn] = useState('');
-    const [checkOut, setCheckout] = useState('');
-    const [adult, setAdult] = useState(0);
-    const [children, setChildren] = useState(0);
+import React from 'react';
 
-    useEffect(() => {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0');
-        const day = String(today.getDate()).padStart(2, '0');
-
-        const todayFormatted = `${year}-${month}-${day}`;
-
-        setMinDate(todayFormatted);
-    }, []);
-
-    const handleForm = async () => {
-
-        const datas = {
-            checkIn,
-            checkOut,
-            adult,
-            children
-        }
-
-        console.log(datas)
-
-        try {
-            const response = await fetch('http://127.0.0.1:8000/booking',{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(datas),
-            })
-            console.log('Berhasil');
-        } catch (err) {
-            console.log(err);
-        }
-    };
-
-    const handleCheckIn = (e) => {
-        setCheckIn(e.target.value);
-    };
-    const handleCheckOut = (e) => {
-        setCheckout(e.target.value);
-    };
-    const handleAdult = (e) => {
-        setAdult(e.target.value);
-    };
-    const handleChildren = (e) => {
-        setChildren(e.target.value);
-    };
-
+const BookingForm = ({ checkIn, checkOut, adult, children, setCheckIn, setCheckout, setAdult, setChildren, getTodayDate, slug }) => {
     return (
-        <div className='bg-black/70 backdrop-blur-sm rounded-t-xl p-4 md:p-6 shadow-lg border border-black/40'>
-            <form onSubmit={handleForm} action={'/booking'} method='POST' className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end'>
+        <div className='md:sticky top-0 z-50 m-5 md:m-0 bg-black/70 backdrop-blur-sm max-w-6xl md:my-10 rounded-xl p-4 md:p-6 md:mx-auto shadow-lg border border-black/40'>
+            <form action={`/${slug}`} method='GET' className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end'>
                 <div>
                     <label className='block text-xs text-white/80 uppercase mb-2'>Check in</label>
                     <input
-                        onChange={handleCheckIn}
-                        min={minDate}
+                        required
                         type='date'
+                        name='checkIn'
+                        min={getTodayDate()}
+                        value={checkIn}
+                        onChange={(e) => setCheckIn(e.target.value)}
                         className='w-full bg-white rounded-md px-3 py-2 text-sm shadow-sm'
                     />
                 </div>
@@ -72,9 +21,12 @@ const BookingForm = () => {
                 <div>
                     <label className='block text-xs text-white/80 uppercase mb-2'>Check out</label>
                     <input
-                        onChange={handleCheckOut}
-                        min={minDate}
+                        required
                         type='date'
+F                        name='checkOut'
+                        min={checkIn}
+                        value={checkOut}
+                        onChange={(e) => setCheckout(e.target.value)}
                         className='w-full bg-white rounded-md px-3 py-2 text-sm shadow-sm'
                     />
                 </div>
@@ -82,10 +34,11 @@ const BookingForm = () => {
                 <div>
                     <label className='block text-xs text-white/80 uppercase mb-2'>Adult</label>
                     <input
-                        onChange={handleAdult}
                         type='number'
-                        placeholder='2'
-                        defaultValue='2025-08-29'
+                        name='adult'
+                        value={adult}
+                        onChange={(e) => setAdult(Number(e.target.value))}
+                        min='1'
                         className='w-full bg-white rounded-md px-3 py-2 text-sm shadow-sm'
                     />
                 </div>
@@ -94,10 +47,11 @@ const BookingForm = () => {
                     <div className='flex-1'>
                         <label className='block text-xs text-white/80 uppercase mb-2'>Children</label>
                         <input
-                            onChange={handleChildren}
-                            placeholder='1'
                             type='number'
-                            defaultValue='2025-08-29'
+                            name='children'
+                            value={children}
+                            onChange={(e) => setChildren(Number(e.target.value))}
+                            min='0'
                             className='w-full bg-white rounded-md px-3 py-2 text-sm shadow-sm'
                         />
                     </div>
@@ -109,6 +63,7 @@ const BookingForm = () => {
                     </button>
                 </div>
             </form>
+            {!checkIn || !checkOut || adult <= 0 ? <p className='mt-2 text-red-600'>Harap isi formulir di atas!</p> : null}
         </div>
     );
 };
