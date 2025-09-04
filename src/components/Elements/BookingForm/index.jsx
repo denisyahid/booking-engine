@@ -63,7 +63,7 @@ F                        name='checkOut'
                     </button>
                 </div>
             </form>
-            {!checkIn || !checkOut || adult <= 0 ? <p className='mt-2 text-red-600'>Harap isi formulir di atas!</p> : null}
+            {/* {!checkIn || !checkOut || adult <= 0 ? <p className='mt-2 text-red-600'>Harap isi formulir di atas!</p> : null} */}
         </div>
     );
 };

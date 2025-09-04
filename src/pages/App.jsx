@@ -38,7 +38,6 @@ const App = () => {
             .get(`http://127.0.0.1:8000/api/${slug}/room`)
             .then((res) => {
                 setRooms(res.data);
-                console.log(res.data);
                 setLoading(false);
             })
             .catch((err) => {
@@ -97,14 +96,6 @@ const App = () => {
                 setChildren={setChildren}
             />
             {!hasSearchParams && <Hero />}
-            {!hasSearchParams && (
-                <div className='bg-white'>
-                    <div className='max-w-6xl bg-white mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10'>
-                        <Accordion />
-                        <Testimonials />
-                    </div>
-                </div>
-            )}
             <RoomCard
                 checkIn={checkIn}
                 checkOut={checkOut}
@@ -117,6 +108,14 @@ const App = () => {
                 roomFacilities={roomFacilities}
                 roomRates={roomRates}
             />
+            {!hasSearchParams && (
+                <div className='bg-white md:py-10 md:mb-10' >
+                    <div className='max-w-6xl bg-white mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10'>
+                        <Accordion />
+                        <Testimonials />
+                    </div>
+                </div>
+            )}
             <Footer />
         </div>
     );
