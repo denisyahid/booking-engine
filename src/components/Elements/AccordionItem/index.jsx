@@ -9,7 +9,7 @@ export default function AccordionItem ({ title })  {
     return (
         <div className='border-b py-3 cursor-pointer' onClick={() => setOpen(!open)}>
             <div className='flex items-center gap-3'>
-                <div className='bg-blue-400 text-white w-6 h-6 flex items-center justify-center rounded-full'>
+                <div className='bg-primary text-white w-6 h-6 flex items-center justify-center rounded-full'>
                     <ChevronDown className={`w-4 h-4 transition-transform ${open ? 'rotate-180' : ''}`} />
                 </div>
                 <span className='font-medium text-gray-700'>{title}</span>
