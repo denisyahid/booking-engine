@@ -9,6 +9,9 @@ import RoomCard from '../components/Fragments/RoomCard';
 import BookingForm from '../components/Elements/BookingForm';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import ReviewCarousel from '../components/Fragments/ReviewCarousel';
+import ReviewSummary from '../components/Elements/ReviewSummary';
+import LocationSection from '../components/Fragments/Location';
 
 const App = () => {
     // Fungsi ambil hari ini (format YYYY-MM-DD biar aman ke backend)
@@ -127,14 +130,16 @@ const App = () => {
                 roomFacilities={roomFacilities}
                 roomRates={roomRates}
             />
-            {!hasSearchParams && (
+            {/* {!hasSearchParams && (
                 <div className='bg-white md:py-10 md:mb-10'>
                     <div className='max-w-6xl bg-white mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10'>
                         <Accordion />
                         <Testimonials />
                     </div>
                 </div>
-            )}
+            )} */}
+            <ReviewCarousel />
+            <LocationSection />
             <Footer />
         </div>
     );
