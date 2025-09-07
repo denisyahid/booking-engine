@@ -55,7 +55,6 @@ const App = () => {
             .get(`http://127.0.0.1:8000/api/${slug}/room`)
             .then((res) => {
                 setRooms(res.data);
-                console.log(res.data)
                 setLoading(false);
             })
             .catch((err) => {

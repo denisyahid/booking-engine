@@ -8,7 +8,7 @@ export default function LocationSection() {
     const {slug} = useParams();
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/${slug}`)
+        axios.get(`http://127.0.0.1:8000/api/hotel/${slug}`)
         .then((res) => {
             setHotel(res.data)
         })
@@ -35,8 +35,10 @@ export default function LocationSection() {
         },
     ];
 
+    // console.log(hotel)
+
     return (
-        <div className='w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+        <div className='w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:my-10'>
             <h2 className='text-xl sm:text-2xl font-semibold mb-4'>Lokasi</h2>
 
             {/* Map + Info */}
@@ -45,7 +47,7 @@ export default function LocationSection() {
                 <div className='flex-1'>
                     <iframe
                         title='map'
-                        src={`https://www.google.com/maps/embed?pb=${hotel.maps}`}
+                        src={`${hotel.maps}`}
                         className='w-full h-64 sm:h-80 lg:h-full rounded-xl shadow'
                         allowFullScreen=''
                         loading='lazy'></iframe>
@@ -55,7 +57,7 @@ export default function LocationSection() {
                 <div className='lg:w-1/3 space-y-4'>
                     {/* Alamat */}
                     <div>
-                        <p className='text-gray-700'>Jalan Bukit Payang No.88, Kintamani, Kec. Kintamani, Kabupaten Bangli, Bali 80652</p>
+                        <p className='text-gray-700'>{hotel.location}</p>
                     </div>
 
                     {/* Destinasi Terdekat */}
