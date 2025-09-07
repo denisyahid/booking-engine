@@ -25,7 +25,7 @@ const Advantage = () => {
                 <div className='w-full grid gap-4 sm:grid-cols-2 md:grid-cols-4'>
                     {advantages.map((item) => (
                         <div key={item.id} className=' flex flex-col h-[15rem] border items-center justify-center text-center gap-3 bg-white shadow p-4'>
-                            <span className='text-3xl'>{item.icon}</span>
+                            <span className='text-5xl'>{item.icon}</span>
                             <div>
                                 <h3 className='font-semibold text-gray-800'>{item.name}</h3>
                                 <p className='text-gray-600 text-sm'>{item.description}</p>
