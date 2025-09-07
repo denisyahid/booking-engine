@@ -19,8 +19,8 @@ export default function HotelCard() {
     if(!hotel) return <ErrorElement />
 
     return (
-        <div className='bg-slate-100 md:py-10'>
-            <div className='max-w-6xl mx-5 md:mx-auto bg-white p-6 border shadow-lg my-10'>
+        <div className='max-w-6xl mx-auto gap-5 flex md:py-10 p-6'>
+            <div className='w-1/2 mx-5 md:mx-auto bg-white p-6 border shadow-lg my-10'>
                 {/* <h2 className='text-2xl font-bold'>{hotel.name}</h2> */}
                 <div className='flex items-center gap-2 text-gray-600 mt-1'>
                     <FaMapMarkerAlt className='text-primary' />
@@ -32,7 +32,7 @@ export default function HotelCard() {
                     </span>
                 </div>
 
-                <h3 className='mt-4 font-semibold text-lg'>Modern Boutique Industrial Hotel</h3>
+                <h3 className='mt-4 font-semibold text-lg'>{hotel.name}</h3>
                 <p className='text-gray-700 mt-2'>
                     {/* {hotel.description} */}
                     {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat minima sint, eveniet doloribus et nam. */}
@@ -59,6 +59,9 @@ export default function HotelCard() {
                         <FaGlobe />
                     </a>
                 </div>
+            </div>
+            <div className='w-1/2'>
+                <img src="/images/hero.jpg" alt="" />
             </div>
         </div>
     );

@@ -12,6 +12,11 @@ import axios from 'axios';
 import ReviewCarousel from '../components/Fragments/ReviewCarousel';
 import ReviewSummary from '../components/Elements/ReviewSummary';
 import LocationSection from '../components/Fragments/Location';
+import AboutSection from '../components/Fragments/About';
+import Advantage from '../components/Fragments/Advantage';
+import PopularFacilities from '../components/Fragments/PopularFacilities';
+import Policies from '../components/Fragments/Policies'
+import FAQ from '../components/Fragments/FAQ';
 
 const App = () => {
     // Fungsi ambil hari ini (format YYYY-MM-DD biar aman ke backend)
@@ -40,6 +45,7 @@ const App = () => {
     const [rooms, setRooms] = useState([]);
     const [roomFacilities, setRoomFacilities] = useState([]);
     const [roomRates, setRoomRates] = useState([]);
+    const [hotel, setHotel] = useState({});
 
     const getTodayDate = () => {
         const today = new Date();
@@ -48,6 +54,12 @@ const App = () => {
         const day = String(today.getDate()).padStart(2, '0');
         return `${year}-${month}-${day}`;
     };
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/hotel/${slug}`).then((res) => {
+            setHotel(res.data);
+        });
+    }, []);
 
     // Rooms
     useEffect(() => {
@@ -129,16 +141,13 @@ const App = () => {
                 roomFacilities={roomFacilities}
                 roomRates={roomRates}
             />
-            {/* {!hasSearchParams && (
-                <div className='bg-white md:py-10 md:mb-10'>
-                    <div className='max-w-6xl bg-white mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10'>
-                        <Accordion />
-                        <Testimonials />
-                    </div>
-                </div>
-            )} */}
+            <Advantage />
             <ReviewCarousel />
+            <PopularFacilities />
             <LocationSection />
+            <Policies />
+            <AboutSection description={hotel.description} title={hotel.name} />
+            <FAQ />
             <Footer />
         </div>
     );

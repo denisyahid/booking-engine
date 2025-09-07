@@ -10,7 +10,7 @@ const Carousel = ({ images = [], name, }) => {
             <img
                 src="https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop"
                 alt={name}
-                className="w-full h-64 md:h-80 object-cover rounded-xl"
+                className="w-full h-64 md:h-80 object-cover"
             />
         );
     }
@@ -26,7 +26,7 @@ const Carousel = ({ images = [], name, }) => {
     return (
         <>
             {/* Carousel */}
-            <div className="relative w-full h-64 md:h-80 overflow-hidden rounded-xl">
+            <div className="relative w-full h-64 md:h-80 overflow-hidden">
                 <div
                     className="flex transition-transform duration-500 ease-in-out"
                     style={{ transform: `translateX(-${current * 100}%)` }}
@@ -36,7 +36,7 @@ const Carousel = ({ images = [], name, }) => {
                             key={idx}
                             src={
                                 img.image
-                                    ? `http://127.0.0.1:8000/storage/${img.image}`
+                                    ? `${img.image}`
                                     : "https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop"
                             }
                             alt={`${name}-${idx}`}
@@ -87,7 +87,7 @@ const Carousel = ({ images = [], name, }) => {
                         <img
                             src={
                                 images[current].image
-                                    ? `http://127.0.0.1:8000/storage/${images[current].image}`
+                                    ? `${images[current].image}`
                                     : "https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop"
                             }
                             alt={name}

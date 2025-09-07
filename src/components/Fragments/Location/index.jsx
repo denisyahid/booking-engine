@@ -2,17 +2,17 @@ import axios from 'axios';
 import { MapPin, Utensils, Landmark, Mountain } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ErrorElement from '../../Elements/ErrorElement';
 
 export default function LocationSection() {
-    const [hotel,setHotel] = useState({});
-    const {slug} = useParams();
+    const [hotel, setHotel] = useState({});
+    const { slug } = useParams();
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/hotel/${slug}`)
-        .then((res) => {
-            setHotel(res.data)
-        })
-    },[])
+        axios.get(`http://127.0.0.1:8000/api/hotel/${slug}`).then((res) => {
+            setHotel(res.data);
+        });
+    }, []);
 
     const nearby = [
         {
@@ -37,21 +37,25 @@ export default function LocationSection() {
 
     // console.log(hotel)
 
+    if (!hotel || !hotel.maps) return <ErrorElement />;
+
     return (
         <div className='w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:my-10'>
             <h2 className='text-xl sm:text-2xl font-semibold mb-4'>Lokasi</h2>
 
             {/* Map + Info */}
-            <div className='flex flex-col lg:flex-row gap-6'>
+            <div className='flex flex-col lg:flex-row-reverse gap-6'>
                 {/* Map */}
-                <div className='flex-1'>
-                    <iframe
-                        title='map'
-                        src={`${hotel.maps}`}
-                        className='w-full h-64 sm:h-80 lg:h-full rounded-xl shadow'
-                        allowFullScreen=''
-                        loading='lazy'></iframe>
-                </div>
+                {hotel && (
+                    <div className='flex-1'>
+                        <iframe
+                            title='map'
+                            src={`${hotel.maps}`}
+                            className='w-full h-64 sm:h-80 lg:h-full shadow'
+                            allowFullScreen=''
+                            loading='lazy'></iframe>
+                    </div>
+                )}
 
                 {/* Info Lokasi */}
                 <div className='lg:w-1/3 space-y-4'>
@@ -67,7 +71,7 @@ export default function LocationSection() {
                             {nearby.map((item, idx) => (
                                 <div
                                     key={idx}
-                                    className='flex items-center justify-between bg-white shadow rounded-lg p-3 hover:bg-gray-50 transition'>
+                                    className='flex items-center justify-between bg-white shadow p-3 hover:bg-gray-50 transition'>
                                     <div className='flex items-center gap-2'>
                                         {item.icon}
                                         <div>

@@ -34,7 +34,6 @@ export default function BookingForm() {
                 mobile_number: e.target.mobileNumber.value,
                 special_request: e.target.specialRequest.value,
             })
-            .then((res) => console.log(res.data))
             .catch((err) => console.error(err));
     };
 
@@ -121,7 +120,6 @@ export default function BookingForm() {
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/images').then((res) => {
             setCarouselImages(res.data);
-            console.log(res.data);
         });
         // .catch(err) {
         //     console.log(err.message);
@@ -291,7 +289,7 @@ export default function BookingForm() {
                     <div className='space-y-6'>
                         {/* Booking Summary */}
                         <div className='border shadow-sm overflow-hidden'>
-                            <img src={`http://127.0.0.1:8000/storage/${rates.room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
+                            <img src={`/${rates.room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
                             <div className='p-4 space-y-2'>
                                 <h3 className='font-semibold'>{rates.room.name}</h3>
                                 <p className='text-sm text-gray-600'>
