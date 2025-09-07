@@ -9,21 +9,37 @@ import RoomCard from '../components/Fragments/RoomCard';
 import BookingForm from '../components/Elements/BookingForm';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
+import ReviewCarousel from '../components/Fragments/ReviewCarousel';
+import ReviewSummary from '../components/Elements/ReviewSummary';
+import LocationSection from '../components/Fragments/Location';
 
 const App = () => {
+    // Fungsi ambil hari ini (format YYYY-MM-DD biar aman ke backend)
+    const getToday = () => {
+        const today = new Date();
+        return today.toISOString().split('T')[0];
+    };
+
+    // Fungsi ambil besok
+    const getTomorrow = () => {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        return tomorrow.toISOString().split('T')[0];
+    };
+
+    const { slug } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const [checkIn, setCheckIn] = useState(queryParams.get('checkIn') || '');
-    const [checkOut, setCheckout] = useState(queryParams.get('checkOut') || '');
-    const [adult, setAdult] = useState(Number(queryParams.get('adult')) || 0);
-    const [children, setChildren] = useState(Number(queryParams.get('children')) || 0);
-    const { slug } = useParams();
     const hasSearchParams = location.search.length > 0;
+    const [loading, setLoading] = useState(true);
+    const [checkIn, setCheckIn] = useState(queryParams.get('checkIn') || getToday());
+    const [checkOut, setCheckOut] = useState(queryParams.get('checkOut') || getTomorrow());
+    const [adult, setAdult] = useState(Number(queryParams.get('adult')) || 1);
+    const [children, setChildren] = useState(Number(queryParams.get('children')) || 0);
     const [rooms, setRooms] = useState([]);
     const [roomFacilities, setRoomFacilities] = useState([]);
     const [roomRates, setRoomRates] = useState([]);
-    const [loading, setLoading] = useState(true);
 
     const getTodayDate = () => {
         const today = new Date();
@@ -33,6 +49,7 @@ const App = () => {
         return `${year}-${month}-${day}`;
     };
 
+    // Rooms
     useEffect(() => {
         axios
             .get(`http://127.0.0.1:8000/api/${slug}/room`)
@@ -45,6 +62,7 @@ const App = () => {
             });
     }, []);
 
+    // Facilities
     useEffect(() => {
         axios
             .get(`http://127.0.0.1:8000/api/facilities`)
@@ -58,6 +76,7 @@ const App = () => {
             });
     }, []);
 
+    // Room Rates
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/rate`).then((res) => {
             setRoomRates(res.data);
@@ -67,6 +86,7 @@ const App = () => {
     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
     const handleBook = (e) => {
+        console.log(checkIn, checkOut);
         const bookingId = e.target.id;
         navigate(`/booking/${bookingId}`, {
             state: {
@@ -82,7 +102,6 @@ const App = () => {
     return (
         <div className='bg-white'>
             <Navbar />
-            <BioHotel />
             <BookingForm
                 slug={slug}
                 getTodayDate={getTodayDate}
@@ -91,11 +110,13 @@ const App = () => {
                 adult={adult}
                 children={children}
                 setCheckIn={setCheckIn}
-                setCheckout={setCheckout}
+                setCheckOut={setCheckOut}
                 setAdult={setAdult}
                 setChildren={setChildren}
+                rooms={rooms}
             />
-            {!hasSearchParams && <Hero />}
+            <BioHotel />
+            {(!hasSearchParams || rooms) && <Hero roomsByHotel={rooms} />}
             <RoomCard
                 checkIn={checkIn}
                 checkOut={checkOut}
@@ -108,14 +129,16 @@ const App = () => {
                 roomFacilities={roomFacilities}
                 roomRates={roomRates}
             />
-            {!hasSearchParams && (
-                <div className='bg-white md:py-10 md:mb-10' >
+            {/* {!hasSearchParams && (
+                <div className='bg-white md:py-10 md:mb-10'>
                     <div className='max-w-6xl bg-white mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-2 gap-10'>
                         <Accordion />
                         <Testimonials />
                     </div>
                 </div>
-            )}
+            )} */}
+            <ReviewCarousel />
+            <LocationSection />
             <Footer />
         </div>
     );

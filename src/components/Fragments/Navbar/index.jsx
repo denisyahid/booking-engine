@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import {useParams} from 'react-router-dom';
 import axios from 'axios';
+import ErrorElement from '../../Elements/ErrorElement';
 
 export default function Navbar() {
     const [open, setOpen] = useState(false);
@@ -14,7 +15,7 @@ export default function Navbar() {
     }, []);
 
 
-    if(!hotel.name) return <p>Loading..</p>
+    if(!hotel.name) return <ErrorElement />
 
     return (
         <header className='w-full shadow-md'>
@@ -37,7 +38,7 @@ export default function Navbar() {
 
                         {/* Center logo/title */}
                         <div className='flex-1 text-center'>
-                            <h1 className='font-serif text-3xl md:text-4xl leading-tight'>
+                            <h1 className='font-sans font-medium text-3xl md:text-4xl leading-tight'>
                                 {hotel.name}
                             </h1>
                         </div>

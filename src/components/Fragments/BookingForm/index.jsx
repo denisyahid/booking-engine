@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
-import Carousel from '../../Elements/Carousel/index';
+import { GoogleLogin } from '@react-oauth/google';
+import { FcGoogle } from 'react-icons/fc';
 
 export default function BookingForm() {
     const [checkIn, setCheckIn] = useState('');
@@ -22,20 +23,34 @@ export default function BookingForm() {
     const location = useLocation();
     const bookingUrl = location.state || {};
 
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     axios
-    //         .post('http://127.0.0.1:8000/api/post/booking', {
-    //             room_id: room.id,
-    //             title: e.target.title.value,
-    //             fullname: e.target.fullname.value,
-    //             email: e.target.email.value,
-    //             mobile_number: e.target.mobileNumber.value,
-    //             special_request: e.target.specialRequest.value,
-    //         })
-    //         .then((res) => console.log(res.data))
-    //         .catch((err) => console.error(err));
-    // };
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        axios
+            .post('http://127.0.0.1:8000/api/post/booking', {
+                room_id: room.id,
+                title: e.target.title.value,
+                fullname: e.target.fullname.value,
+                email: e.target.email.value,
+                mobile_number: e.target.mobileNumber.value,
+                special_request: e.target.specialRequest.value,
+            })
+            .then((res) => console.log(res.data))
+            .catch((err) => console.error(err));
+    };
+
+    const handleLogin = async (credentialResponse) => {
+        try {
+            // kirim credential (token google) ke backend
+            const res = await axios.post('http://localhost:8000/api/auth/google/callback', {
+                token: credentialResponse.credential,
+            });
+
+            console.log(res.data); // user + token dari Laravel
+            localStorage.setItem('token', res.data.token);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
     const handleCheckIn = (e) => {
         setCheckIn(e.target.value);
@@ -145,78 +160,75 @@ export default function BookingForm() {
             .catch((err) => console.error(err));
     }, []);
 
-    // useEffect(() => {
-    //     axios.get(`http://127.0.0.1:8000/api/rate/${bookingUrl.bookingId}`).then((res) => {
-    //         setRates(res.data);
-    //     });
-    // }, []);
-
     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
     if (!loading) return <p>Loading..</p>;
 
     return (
         <div className='min-h-screen bg-gray-100 flex justify-center py-6 px-3'>
-            <div className='w-full max-w-5xl bg-white rounded-2xl shadow-lg overflow-hidden'>
+            <div className='w-full max-w-5xl bg-white shadow-lg overflow-hidden'>
                 {/* Header */}
-                <div className='bg-blue-800 text-white p-5 text-center text-xl font-semibold'>Your Accommodation Booking</div>
+                <div className='bg-primary text-white p-5 text-center text-xl font-semibold'>Your Accommodation Booking</div>
+
+                <div className='flex flex-col justify-center items-start px-6 py-4'>
+                    <h5 className='text-lg mb-2'>Login dengan : </h5>
+                    <a className='w-32 h-10 flex items-center justify-center border' href="http://127.0.0.1:8000/api/auth/google/redirect"><span className='me-2'>Google</span> <FcGoogle className='text-xl'/> </a>
+                </div>
 
                 {/* Content */}
-                <form onSubmit={handlePayment} className='grid md:grid-cols-3 gap-6 p-6'>
+                <form onSubmit={handlePayment} className='grid md:grid-cols-3 gap-6 px-6'>
                     <input type='hidden' name='total' value={rates.rate} />
                     {/* Left Content */}
                     <div className='md:col-span-2 space-y-6'>
                         {/* Contact Details */}
-                        <div className='border rounded-xl p-5 space-y-4 shadow-sm'>
+                        <div className='border p-5 space-y-4 shadow-sm'>
                             <h2 className='font-semibold text-lg'>Contact Details</h2>
                             <div className='grid md:grid-cols-2 gap-4'>
-                                <select name='title' className='border rounded-lg p-2'>
+                                <select name='title' className='border p-2'>
                                     <option>Mr.</option>
                                     <option>Mrs.</option>
                                     <option>Ms.</option>
                                 </select>
-                                <input name='fullname' type='text' placeholder='Full Name' className='border rounded-lg p-2' />
-                                <input name='email' type='email' placeholder='Email Address' className='border rounded-lg p-2 col-span-2' />
+                                <input name='fullname' type='text' placeholder='Full Name' className='border p-2' />
+                                <input name='email' type='email' placeholder='Email Address' className='border p-2 col-span-2' />
                                 <div className='flex col-span-2 gap-2'>
-                                    <select className='border rounded-lg p-2 w-28'>
+                                    <select className='border p-2 w-28'>
                                         <option>+62</option>
                                         <option>+60</option>
                                         <option>+65</option>
                                     </select>
-                                    <input name='mobileNumber' type='tel' placeholder='Mobile Number' className='border rounded-lg p-2 flex-1' />
+                                    <input name='mobileNumber' type='tel' placeholder='Mobile Number' className='border p-2 flex-1' />
                                 </div>
                             </div>
 
-                            {!bookingData.checkIn && (
-                                <div className='flex gap-4'>
-                                    <div className='w-1/2 flex flex-col'>
-                                        <label className='font-semibold mb-1' htmlFor='checkIn'>
-                                            Check In
-                                        </label>
-                                        <input
-                                            onChange={handleCheckIn}
-                                            value={checkIn}
-                                            type='date'
-                                            name='checkIn'
-                                            id='checkIn'
-                                            className='border rounded-lg p-2'
-                                        />
-                                    </div>
-                                    <div className='w-1/2 flex flex-col'>
-                                        <label className='font-semibold mb-1' htmlFor='checkOut'>
-                                            Check Out
-                                        </label>
-                                        <input
-                                            onChange={handleCheckOut}
-                                            value={checkOut}
-                                            type='date'
-                                            name='checkOut'
-                                            id='checkOut'
-                                            className='border rounded-lg p-2'
-                                        />
-                                    </div>
+                            <div className='flex gap-4'>
+                                <div className='w-1/2 flex flex-col'>
+                                    <label className='font-semibold mb-1' htmlFor='checkIn'>
+                                        Check In
+                                    </label>
+                                    <input
+                                        onChange={handleCheckIn}
+                                        value={checkIn}
+                                        type='date'
+                                        name='checkIn'
+                                        id='checkIn'
+                                        className='border p-2'
+                                    />
                                 </div>
-                            )}
+                                <div className='w-1/2 flex flex-col'>
+                                    <label className='font-semibold mb-1' htmlFor='checkOut'>
+                                        Check Out
+                                    </label>
+                                    <input
+                                        onChange={handleCheckOut}
+                                        value={checkOut}
+                                        type='date'
+                                        name='checkOut'
+                                        id='checkOut'
+                                        className='border p-2'
+                                    />
+                                </div>
+                            </div>
 
                             {/* <div className='flex items-center gap-4 text-sm'>
                                 <label className='flex items-center gap-1'>
@@ -231,7 +243,7 @@ export default function BookingForm() {
                         </div>
 
                         {/* Stay Details */}
-                        <div className='border rounded-xl p-5 shadow-sm space-y-4'>
+                        <div className='border p-5 shadow-sm space-y-4'>
                             <h2 className='font-semibold text-lg'>Stay Details at {`${rates.room.hotel.name}`}</h2>
                             <p className='text-sm text-gray-500'>For smoother check-in, enter the guest’s name as written on ID card.</p>
 
@@ -248,21 +260,21 @@ export default function BookingForm() {
 
                             <textarea
                                 name='specialRequest'
-                                className='border rounded-lg p-2 w-full'
+                                className='border p-2 w-full'
                                 placeholder='Any special requests or needs?'
                                 rows={3}
                             />
                         </div>
 
                         {/* Policy */}
-                        <div className='border rounded-xl p-5 shadow-sm'>
+                        <div className='border p-5 shadow-sm'>
                             <h2 className='font-semibold text-lg'>Cancellation Policy</h2>
                             <p className='text-sm text-gray-600'>
                                 Refund and reschedule not allowed. If you don’t arrive on check-in date, it will be consideblue no-show.
                             </p>
                         </div>
 
-                        <div className='border rounded-xl p-5 shadow-sm'>
+                        <div className='border p-5 shadow-sm'>
                             <h2 className='font-semibold text-lg'>Accommodation Policies</h2>
                             <div className='flex justify-between text-sm text-gray-700 mt-2'>
                                 <p>
@@ -278,37 +290,36 @@ export default function BookingForm() {
                     {/* Right Sidebar */}
                     <div className='space-y-6'>
                         {/* Booking Summary */}
-                        <div className='border rounded-xl shadow-sm overflow-hidden'>
-                            
-                            <img src={`${rates.room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
+                        <div className='border shadow-sm overflow-hidden'>
+                            <img src={`http://127.0.0.1:8000/storage/${rates.room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
                             <div className='p-4 space-y-2'>
                                 <h3 className='font-semibold'>{rates.room.name}</h3>
                                 <p className='text-sm text-gray-600'>
-                                    {getDayName(checkIn)} {checkIn} - {getDayName(checkOut)} {checkOut} <br />1 Night • 1 Room • {rates.room.capacity}{' '}
-                                    Guest
+                                    {getDayName(checkIn)} {checkIn} <span className='mx-1'>/</span> {getDayName(checkOut)} {checkOut} <br />1 Night •
+                                    1 Room • {rates.room.capacity} Guest
                                 </p>
-                                <p className='text-right font-bold text-blue-700'>{formatRupiah(rates.rate)}</p>
+                                <p className='text-right font-bold text-primary'>{formatRupiah(rates.rate)}</p>
                             </div>
                         </div>
 
                         {/* Coupon */}
-                        {/* <div className='border rounded-xl p-4 shadow-sm space-y-2'>
+                        <div className='border p-4 shadow-sm space-y-2'>
                             <h2 className='font-semibold text-lg'>Apply Coupons</h2>
                             <div className='flex gap-2'>
-                                <input type='text' placeholder='Enter coupon' className='border rounded-lg p-2 flex-1' />
-                                <button className='bg-blue-700 text-white px-4 rounded-lg hover:bg-blue-800'>Apply</button>
+                                <input type='text' placeholder='Enter coupon' className='border p-2 flex-1' />
+                                <button className='bg-primary text-white px-4 hover:bg-blue-600'>Apply</button>
                             </div>
-                        </div> */}
+                        </div>
 
                         {/* Total */}
-                        <div className='border rounded-xl p-4 shadow-sm space-y-4'>
+                        <div className='border p-4 shadow-sm space-y-4'>
                             <div className='flex justify-between text-lg font-semibold'>
                                 <span>Total</span>
-                                <span className='text-blue-700'>{formatRupiah(rates.rate)}</span>
+                                <span className='text-primary'>{formatRupiah(rates.rate)}</span>
                             </div>
                             <button
                                 type='submit'
-                                className='w-full bg-blue-700 text-white py-3 rounded-xl text-lg font-semibold hover:bg-blue-800 transition'>
+                                className='w-full bg-primary text-white py-3 text-lg font-semibold hover:bg-blue-600 transition'>
                                 Continue To Payment
                             </button>
                         </div>

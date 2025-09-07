@@ -6,6 +6,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Carousel from '../../Elements/Carousel';
 import { image } from 'framer-motion/client';
+import ErrorElement from '../../Elements/ErrorElement';
 
 export default function RoomCard({ checkIn, checkOut, adult, children, handleBook, rooms, loading, roomRates, roomFacilities, formatRupiah }) {
     const [carouselImages, setCarouselImages] = useState([]);
@@ -13,20 +14,16 @@ export default function RoomCard({ checkIn, checkOut, adult, children, handleBoo
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/images').then((res) => {
             setCarouselImages(res.data);
-            console.log(res.data);
         });
-        // .catch(err) {
-        //     console.log(err.message);
-        // }
     }, []);
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <ErrorElement />
 
     return (
         <div className='w-full bg-white md:py-10'>
             {rooms.map((room, id) => {
                 if (id <= 2) {
                     return (
-                        <div key={room.id} className='max-w-6xl mx-auto md:my-10 bg-white shadow-md rounded-2xl overflow-hidden md:flex'>
+                        <div key={room.id} className='max-w-6xl mx-auto md:my-10 bg-white shadow-md overflow-hidden md:flex'>
                             {/* Left - Image & Facilities */}
                             <div className='md:w-1/2 p-4'>
                                 {carouselImages.filter((image) => image.room_id == room.id).length > 0 ? (
@@ -35,14 +32,15 @@ export default function RoomCard({ checkIn, checkOut, adult, children, handleBoo
                                     <img
                                         src='https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'
                                         alt={room.name}
-                                        className='rounded-xl w-full h-64 md:h-80 object-cover'
+                                        className=' w-full h-64 md:h-80 object-cover'
                                     />
                                 )}
 
                                 <h2 className='text-xl font-bold mt-4'>{room.name}</h2>
-                                <p className='text-gray-500 flex items-center gap-2 mt-1'>
-                                    <FaVectorSquare className='text-blue-500' /> {room.size} M<sup>2</sup>
-                                </p>
+                                <p className='text-gray-500 flex items-center gap-2 mt-1' >{room.description.substring(0,70)} ...</p>
+                                {/* <p className='text-gray-500 flex items-center gap-2 mt-1'>
+                                    <FaVectorSquare className='text-primary' /> {room.size} M<sup>2</sup>
+                                </p> */}
 
                                 <div className='flex flex-wrap gap-2 mt-3'>
                                     {room.facilities &&
@@ -54,7 +52,7 @@ export default function RoomCard({ checkIn, checkOut, adult, children, handleBoo
                                     .filter((rate) => rate.room_id == room.id)
                                     .map((rate) => (
                                         <div key={rate.id} className='md:w-full p-4 flex flex-col gap-4'>
-                                            <div className={`border rounded-xl p-4 shadow-sm hover:shadow-md transition`}>
+                                            <div className={`border p-4 shadow-sm hover:shadow-md transition`}>
                                                 <div className='flex justify-between items-center'>
                                                     <h3 className='font-semibold text-lg'>{rate.plan}</h3>
                                                 </div>
@@ -74,7 +72,7 @@ export default function RoomCard({ checkIn, checkOut, adult, children, handleBoo
                                                 {rate.rate && (
                                                     <div className='flex justify-between items-center'>
                                                         <div>
-                                                            <p className='mt-3 font-bold text-lg text-blue-600'>{formatRupiah(rate.rate)}</p>
+                                                            <p className='mt-3 font-bold text-lg text-primary'>{formatRupiah(rate.rate)}</p>
                                                             <p className='text-xs text-gray-500'>Total for 1 room includes taxes & fee</p>
                                                         </div>
                                                         <button
@@ -82,7 +80,7 @@ export default function RoomCard({ checkIn, checkOut, adult, children, handleBoo
                                                             onClick={handleBook}
                                                             // type='submit'
                                                             // disabled={!checkIn || !checkOut || adult <= 0}
-                                                            className={`bg-[#0079FF] h-10 text-white px-6 py-0 rounded-full shadow `}>
+                                                            className={`bg-primary h-10 text-white px-6 py-0  shadow `}>
                                                             Book
                                                         </button>
                                                     </div>

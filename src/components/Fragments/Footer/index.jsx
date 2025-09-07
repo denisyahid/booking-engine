@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { FaInstagram, FaYoutube, FaLinkedin } from 'react-icons/fa';
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
+import ErrorElement from '../../Elements/ErrorElement';
 
 export default function Footer() {
     const [hotel, setHotel] = useState({});
@@ -15,10 +16,10 @@ export default function Footer() {
         });
     }, []);
 
-    if (!hotel.name) return <p>Loading..</p>;
+    if (!hotel.name) return <ErrorElement />;
 
     return (
-        <footer className='bg-[#0079FF] text-white px-6 md:px-16 lg:px-24 py-10'>
+        <footer className='bg-primary text-white px-6 md:px-16 lg:px-24 py-10'>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-10'>
                 {/* Bagian Kiri */}
                 <div>
@@ -71,8 +72,8 @@ export default function Footer() {
                         </a>
                     </div>
                     <div className='mt-4 flex'>
-                        <input type='email' placeholder='Enter Your Email' className='w-full p-2 rounded-l-md text-black outline-none' />
-                        <button className='bg-gray-700 hover:bg-gray-800 px-4 rounded-r-md'>Subscribe</button>
+                        <input type='email' placeholder='Enter Your Email' className='w-full p-2 text-black outline-none' />
+                        <button className='bg-gray-700 hover:bg-gray-800 px-4 '>Subscribe</button>
                     </div>
                 </div>
             </div>
