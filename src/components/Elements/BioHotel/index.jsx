@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 export default function HotelCard() {
-    const [hotel,setHotel] = useState({}); 
+    const [hotel, setHotel] = useState({});
     const [showMore, setShowMore] = useState(false);
     const { slug } = useParams();
 
@@ -30,11 +30,8 @@ export default function HotelCard() {
                 </div>
 
                 <h3 className='mt-4 font-semibold text-lg'>Modern Boutique Industrial Hotel</h3>
-                <p className='text-gray-700 mt-2'>
-                    {hotel.description}
-                    {/* Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugiat minima sint, eveniet doloribus et nam. */}
-                    {/* {showMore ? hotel.description : hotel.description.substring(0, 150) + "..."} */}
-                </p>
+                <p className='text-gray-700 mt-2'>{showMore ? hotel.description : hotel.description?.substring(0, 150) + '...'}</p>
+
                 <button type='' onClick={() => setShowMore(!showMore)} className='mt-2 text-blue-600 font-semibold'>
                     {showMore ? 'Show Less' : 'Show More'}
                 </button>

@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { data, useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
+import Carousel from '../../Elements/Carousel/index';
 
 export default function BookingForm() {
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
-    const [room, setRoom] = useState({});
+    const [carouselImages, setCarouselImages] = useState([]);
+
+    // const [room, setRoom] = useState({});
     const [rates, setRates] = useState({});
     const [facility, setFacility] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -19,20 +22,20 @@ export default function BookingForm() {
     const location = useLocation();
     const bookingUrl = location.state || {};
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        axios
-            .post('http://127.0.0.1:8000/api/post/booking', {
-                room_id: room.id,
-                title: e.target.title.value,
-                fullname: e.target.fullname.value,
-                email: e.target.email.value,
-                mobile_number: e.target.mobileNumber.value,
-                special_request: e.target.specialRequest.value,
-            })
-            .then((res) => console.log(res.data))
-            .catch((err) => console.error(err));
-    };
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     axios
+    //         .post('http://127.0.0.1:8000/api/post/booking', {
+    //             room_id: room.id,
+    //             title: e.target.title.value,
+    //             fullname: e.target.fullname.value,
+    //             email: e.target.email.value,
+    //             mobile_number: e.target.mobileNumber.value,
+    //             special_request: e.target.specialRequest.value,
+    //         })
+    //         .then((res) => console.log(res.data))
+    //         .catch((err) => console.error(err));
+    // };
 
     const handleCheckIn = (e) => {
         setCheckIn(e.target.value);
@@ -99,6 +102,16 @@ export default function BookingForm() {
 
         return dayName;
     }
+
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/api/images').then((res) => {
+            setCarouselImages(res.data);
+            console.log(res.data);
+        });
+        // .catch(err) {
+        //     console.log(err.message);
+        // }
+    }, []);
 
     useEffect(() => {
         const params = new URLSearchParams(location.search);
@@ -266,7 +279,8 @@ export default function BookingForm() {
                     <div className='space-y-6'>
                         {/* Booking Summary */}
                         <div className='border rounded-xl shadow-sm overflow-hidden'>
-                            <img src={`http://127.0.0.1:8000/storage/${rates.room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
+                            
+                            <img src={`${rates.room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
                             <div className='p-4 space-y-2'>
                                 <h3 className='font-semibold'>{rates.room.name}</h3>
                                 <p className='text-sm text-gray-600'>

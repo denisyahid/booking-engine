@@ -58,7 +58,7 @@ F                        name='checkOut'
 
                     <button
                         type='submit'
-                        className='ml-2 bg-blue-600 hover:bg-blue-700 h-10 text-white px-4 py-2 rounded-md text-sm whitespace-nowrap'>
+                        className='ml-2 bg-[#0079FF] hover:bg-blue-700 h-10 text-white px-4 py-2 rounded-md text-sm whitespace-nowrap'>
                         CARI
                     </button>
                 </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
-const Carousel = ({ images = [], name, roomId }) => {
+const Carousel = ({ images = [], name, }) => {
     const [current, setCurrent] = useState(0);
 
     if (images.length === 0) {
@@ -24,7 +24,7 @@ const Carousel = ({ images = [], name, roomId }) => {
                 {images.map((img, idx) => (
                     <img
                         key={idx}
-                        src={img.image ? `http://127.0.0.1:8000/storage/${img.image}` : 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}
+                        src={img.image ? `${img.image}` : 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'}
                         alt={`${name}-${idx}`}
                         className='w-full h-64 md:h-80 object-cover flex-shrink-0'
                     />

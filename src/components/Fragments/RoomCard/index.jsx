@@ -82,7 +82,7 @@ export default function RoomCard({ checkIn, checkOut, adult, children, handleBoo
                                                             onClick={handleBook}
                                                             // type='submit'
                                                             // disabled={!checkIn || !checkOut || adult <= 0}
-                                                            className={`bg-blue-600 h-10 text-white px-6 py-0 rounded-full shadow `}>
+                                                            className={`bg-[#0079FF] h-10 text-white px-6 py-0 rounded-full shadow `}>
                                                             Book
                                                         </button>
                                                     </div>
