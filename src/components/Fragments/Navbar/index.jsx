@@ -37,7 +37,8 @@ export default function Navbar() {
                         </div>
 
                         {/* Center logo/title */}
-                        <div className='flex-1 text-center'>
+                        <div className='flex justify-center text-center'>
+                            {/* <img className='w-20' src="/images/klinik.png" alt="" /> */}
                             <h1 className='font-sans font-medium text-3xl md:text-4xl leading-tight'>
                                 {hotel.name}
                             </h1>

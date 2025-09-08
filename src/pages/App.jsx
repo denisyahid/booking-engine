@@ -2,19 +2,16 @@ import React, { useEffect, useState } from 'react';
 import Hero from '../Hero';
 import Navbar from '../components/Fragments/Navbar/index';
 import Footer from '../components/Fragments/Footer';
-import Accordion from '../components/Fragments/Accordion';
-import Testimonials from '../components/Fragments/Testimonials';
 import BioHotel from '../components/Elements/BioHotel';
 import RoomCard from '../components/Fragments/RoomCard';
 import BookingForm from '../components/Elements/BookingForm';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import ReviewCarousel from '../components/Fragments/ReviewCarousel';
-import ReviewSummary from '../components/Elements/ReviewSummary';
 import LocationSection from '../components/Fragments/Location';
 import AboutSection from '../components/Fragments/About';
 import Advantage from '../components/Fragments/Advantage';
-import PopularFacilities from '../components/Fragments/PopularFacilities';
+import Facilities from '../components/Fragments/PopularFacilities';
 import Policies from '../components/Fragments/Policies'
 import FAQ from '../components/Fragments/FAQ';
 
@@ -143,7 +140,7 @@ const App = () => {
             />
             <Advantage />
             <ReviewCarousel />
-            <PopularFacilities />
+            <Facilities />
             <LocationSection />
             <Policies />
             <AboutSection description={hotel.description} title={hotel.name} />

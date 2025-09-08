@@ -11,7 +11,6 @@ export default function Policies() {
         axios.get(`http://127.0.0.1:8000/api/${slug}/policies`)
         .then((res) => {
             setPolicies(res.data.policies);
-            console.log(res.data.policies)
         });
     }, [slug]);
 

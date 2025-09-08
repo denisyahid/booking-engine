@@ -4,6 +4,7 @@ import { FaFacebook, FaInstagram, FaYoutube, FaTiktok, FaGlobe } from 'react-ico
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import ErrorElement from '../ErrorElement';
+import HotelGallery from '../HotelGallery';
 
 export default function HotelCard() {
     const [hotel, setHotel] = useState({});
@@ -19,8 +20,8 @@ export default function HotelCard() {
     if (!hotel) return <ErrorElement />;
 
     return (
-        <div className='max-w-6xl mx-auto gap-5 flex items-center md:py-10 p-6'>
-            <div className='w-1/2 mx-5 md:mx-auto bg-white p-6 border shadow-lg my-10'>
+        <div className='max-w-6xl mx-auto gap-5 flex flex-wrap md:flex-nowrap items-center md:py-10'>
+            <div className='w-full md:w-1/2 mx-5 md:mx-auto bg-white p-6 border shadow-lg my-10'>
                 {/* <h2 className='text-2xl font-bold'>{hotel.name}</h2> */}
                 <div className='flex items-center gap-2 text-gray-600 mt-1'>
                     <FaMapMarkerAlt className='text-primary' />
@@ -60,9 +61,16 @@ export default function HotelCard() {
                     </a>
                 </div>
             </div>
-            <div className='w-1/2 h-[270px] object-cover object-bottom overflow-hidden'>
-                <img className='object-cover object-bottom w-full h-max' src='/images/hero.jpg' alt='' />
-            </div>
+            <HotelGallery
+                images={[
+                    '/images/hero.jpg',
+                    '/images/room1.jpg',
+                    '/images/room2.jpg',
+                    '/images/room3.jpg',
+                    '/images/room4.jpg',
+                    '/images/room5.jpg',
+                ]}
+            />
         </div>
     );
 }
