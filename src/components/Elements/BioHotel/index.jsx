@@ -9,6 +9,7 @@ import HotelGallery from '../HotelGallery';
 export default function HotelCard() {
     const [hotel, setHotel] = useState({});
     const [showMore, setShowMore] = useState(false);
+    const [images,setImages] = useState([]);
     const { slug } = useParams();
 
     useEffect(() => {
@@ -16,6 +17,14 @@ export default function HotelCard() {
             setHotel(res.data);
         });
     }, []);
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/${slug}/image`)
+        .then((res) => {
+            const images = res.data.map((data) => data.image)
+            setImages(images)
+        })
+    },[])
 
     if (!hotel) return <ErrorElement />;
 
@@ -62,14 +71,7 @@ export default function HotelCard() {
                 </div>
             </div>
             <HotelGallery
-                images={[
-                    '/images/hero.jpg',
-                    '/images/room1.jpg',
-                    '/images/room2.jpg',
-                    '/images/room3.jpg',
-                    '/images/room4.jpg',
-                    '/images/room5.jpg',
-                ]}
+                images={images}
             />
         </div>
     );

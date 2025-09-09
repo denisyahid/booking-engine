@@ -5,6 +5,8 @@ import './index.css';
 import App from './pages/App.jsx';
 import BookingPage from './pages/Booking/index.jsx';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import LoginPage from './pages/Login/index.jsx';
+import RegisterPage from './pages/Register/index.jsx';
 
 const router = createBrowserRouter([
     {
@@ -18,6 +20,14 @@ const router = createBrowserRouter([
     {
         path: '/booking/:id',
         element: <BookingPage />,
+    },
+    {
+        path: '/login',
+        element: <LoginPage />,
+    },
+    {
+        path: '/register',
+        element: <RegisterPage />,
     },
 ]);
 

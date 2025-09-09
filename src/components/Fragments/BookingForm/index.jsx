@@ -3,6 +3,8 @@ import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { GoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from 'react-icons/fc';
+import { FaUserCircle } from 'react-icons/fa';
+import Carousel from '../../Elements/Carousel';
 
 export default function BookingForm() {
     const [checkIn, setCheckIn] = useState('');
@@ -44,7 +46,6 @@ export default function BookingForm() {
                 token: credentialResponse.credential,
             });
 
-            console.log(res.data); // user + token dari Laravel
             localStorage.setItem('token', res.data.token);
         } catch (err) {
             console.error(err);
@@ -118,12 +119,10 @@ export default function BookingForm() {
     }
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/images').then((res) => {
+        axios.get(`http://127.0.0.1:8000/api/${id}/`).then((res) => {
             setCarouselImages(res.data);
+            console.log(res.data)
         });
-        // .catch(err) {
-        //     console.log(err.message);
-        // }
     }, []);
 
     useEffect(() => {
@@ -170,7 +169,15 @@ export default function BookingForm() {
 
                 <div className='flex flex-col justify-center items-start px-6 py-4'>
                     <h5 className='text-lg mb-2'>Login dengan : </h5>
-                    <a className='w-32 h-10 flex items-center justify-center border' href="http://127.0.0.1:8000/api/auth/google/redirect"><span className='me-2'>Google</span> <FcGoogle className='text-xl'/> </a>
+                    <div className='flex gap-4'>
+                        <a className='w-32 h-10 flex items-center justify-center border' href='/login'>
+                            <span className='me-2'>Login</span>
+                            <FaUserCircle className='text-xl' />{' '}
+                        </a>
+                        <a className='w-32 h-10 flex items-center justify-center border' href='http://127.0.0.1:8000/api/auth/google/redirect'>
+                            <span className='me-2'>Google</span> <FcGoogle className='text-xl' />{' '}
+                        </a>
+                    </div>
                 </div>
 
                 {/* Content */}
@@ -204,14 +211,7 @@ export default function BookingForm() {
                                     <label className='font-semibold mb-1' htmlFor='checkIn'>
                                         Check In
                                     </label>
-                                    <input
-                                        onChange={handleCheckIn}
-                                        value={checkIn}
-                                        type='date'
-                                        name='checkIn'
-                                        id='checkIn'
-                                        className='border p-2'
-                                    />
+                                    <input onChange={handleCheckIn} value={checkIn} type='date' name='checkIn' id='checkIn' className='border p-2' />
                                 </div>
                                 <div className='w-1/2 flex flex-col'>
                                     <label className='font-semibold mb-1' htmlFor='checkOut'>
@@ -256,12 +256,7 @@ export default function BookingForm() {
                                 </ul>
                             </div>
 
-                            <textarea
-                                name='specialRequest'
-                                className='border p-2 w-full'
-                                placeholder='Any special requests or needs?'
-                                rows={3}
-                            />
+                            <textarea name='specialRequest' className='border p-2 w-full' placeholder='Any special requests or needs?' rows={3} />
                         </div>
 
                         {/* Policy */}
@@ -289,12 +284,15 @@ export default function BookingForm() {
                     <div className='space-y-6'>
                         {/* Booking Summary */}
                         <div className='border shadow-sm overflow-hidden'>
-                            <img src={`/${rates.room.image}`} alt='Hotel Room' className='w-full h-40 object-cover' />
+                            {/* Ganti img jadi Carousel */}
+                            <Carousel images={carouselImages} name={rates.room.name} />
+
                             <div className='p-4 space-y-2'>
                                 <h3 className='font-semibold'>{rates.room.name}</h3>
                                 <p className='text-sm text-gray-600'>
-                                    {getDayName(checkIn)} {checkIn} <span className='mx-1'>/</span> {getDayName(checkOut)} {checkOut} <br />1 Night •
-                                    1 Room • {rates.room.capacity} Guest
+                                    {getDayName(checkIn)} {checkIn}
+                                    <span className='mx-1'>/</span>
+                                    {getDayName(checkOut)} {checkOut} <br />1 Night • 1 Room • {rates.room.capacity} Guest
                                 </p>
                                 <p className='text-right font-bold text-primary'>{formatRupiah(rates.rate)}</p>
                             </div>
@@ -315,9 +313,7 @@ export default function BookingForm() {
                                 <span>Total</span>
                                 <span className='text-primary'>{formatRupiah(rates.rate)}</span>
                             </div>
-                            <button
-                                type='submit'
-                                className='w-full bg-primary text-white py-3 text-lg font-semibold hover:bg-blue-600 transition'>
+                            <button type='submit' className='w-full bg-primary text-white py-3 text-lg font-semibold hover:bg-blue-600 transition'>
                                 Continue To Payment
                             </button>
                         </div>
