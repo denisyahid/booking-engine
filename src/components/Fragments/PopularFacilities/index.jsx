@@ -40,7 +40,7 @@ export default function Facilities() {
     },[])
 
     return (
-        <div className='max-w-6xl mx-auto bg-white p-6 shadow rounded-lg my-6'>
+        <div className='max-w-6xl mx-auto bg-white p-6 shadow rounded-lg my-6 md:my-10 md:py-10'>
             <h2 className='text-xl font-semibold mb-4'>Fasilitas Populer</h2>
 
             {/* Populer */}

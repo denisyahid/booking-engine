@@ -9,7 +9,7 @@ export default function LoginPage() {
         <div className='min-h-screen flex flex-col md:flex-row'>
             {/* Left Side (Image) */}
             <div className='hidden md:flex md:w-1/2 relative'>
-                <img src='/images/room4.jpg' alt='Hotel Room' className='w-full h-full object-cover' />
+                <img src='/images/room10.jpg' alt='Hotel Room' className='w-full h-full object-cover' />
                 <div className='absolute bottom-10 left-8 text-white'>
                     <h1 className='text-3xl font-bold'>System</h1>
                     <h2 className='text-2xl font-bold'>NAJJO Central Reservation System</h2>
@@ -24,12 +24,12 @@ export default function LoginPage() {
 
             {/* Right Side (Form) */}
             <div className='flex w-full md:w-1/2 justify-center items-center p-6 md:p-12'>
-                <form onSubmit={handleLogin}>
+                <form onSubmit="">
                     <div className='w-full max-w-md bg-white rounded-lg shadow-md p-8'>
                         {/* Logo */}
-                        <div className='flex justify-center mb-6'>
+                        {/* <div className='flex justify-center mb-6'>
                             <img src='/logo.png' alt='Logo' className='h-12' />
-                        </div>
+                        </div> */}
 
                         {/* Title */}
                         <h2 className='text-center text-2xl font-bold mb-6'>Login</h2>
@@ -78,20 +78,14 @@ export default function LoginPage() {
                                     <img src='https://cdn-icons-png.flaticon.com/512/281/281764.png' alt='Facebook' className='h-5 w-5' />
                                 </button>
                             </a>
-                            {/* <button className='p-3 border rounded-full hover:bg-gray-100'>
-                            <img src='https://cdn-icons-png.flaticon.com/512/281/281769.png' alt='Google' className='h-5 w-5' />
-                        </button>
-                        <button className='p-3 border rounded-full hover:bg-gray-100'>
-                            <img src='https://cdn-icons-png.flaticon.com/512/732/732200.png' alt='Apple' className='h-5 w-5' />
-                        </button> */}
                         </div>
 
                         {/* Register */}
                         <p className='text-center text-sm text-gray-500 mt-6'>
                             Belum punya akun?{' '}
-                            <button type='submit' className='text-blue-600 font-medium hover:underline'>
+                            <a href='/register' className='text-blue-600 font-medium hover:underline'>
                                 Daftar
-                            </button>
+                            </a>
                         </p>
                     </div>
                 </form>

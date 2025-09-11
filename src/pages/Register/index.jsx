@@ -58,9 +58,9 @@ export default function RegisterPage() {
                 <form onSubmit={handleRegister}>
                     <div className='w-full max-w-md bg-white rounded-lg shadow-md p-8'>
                         {/* Logo */}
-                        <div className='flex justify-center mb-6'>
+                        {/* <div className='flex justify-center mb-6'>
                             <img src='/logo.png' alt='Logo' className='h-12' />
-                        </div>
+                        </div> */}
 
                         {/* Title */}
                         <h2 className='text-center text-2xl font-bold mb-6'>Register</h2>

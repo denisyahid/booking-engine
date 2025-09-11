@@ -9,7 +9,7 @@ import HotelGallery from '../HotelGallery';
 export default function HotelCard() {
     const [hotel, setHotel] = useState({});
     const [showMore, setShowMore] = useState(false);
-    const [images,setImages] = useState([]);
+    const [images, setImages] = useState([]);
     const { slug } = useParams();
 
     useEffect(() => {
@@ -19,12 +19,11 @@ export default function HotelCard() {
     }, []);
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/image`)
-        .then((res) => {
-            const images = res.data.map((data) => data.image)
-            setImages(images)
-        })
-    },[])
+        axios.get(`http://127.0.0.1:8000/api/${slug}/image`).then((res) => {
+            const images = res.data.map((data) => data.image);
+            setImages(images);
+        });
+    }, []);
 
     if (!hotel) return <ErrorElement />;
 
@@ -53,26 +52,32 @@ export default function HotelCard() {
                 </button>
 
                 <div className='flex gap-4 mt-4 text-xl'>
-                    <a href={''} target='_blank' rel='noreferrer'>
-                        <FaFacebook className='text-primary' />
-                    </a>
-                    <a href={''} target='_blank' rel='noreferrer'>
-                        <FaInstagram className='text-pink-500' />
-                    </a>
-                    <a href={''} target='_blank' rel='noreferrer'>
-                        <FaYoutube className='text-red-600' />
-                    </a>
-                    <a href={''} target='_blank' rel='noreferrer'>
-                        <FaTiktok />
-                    </a>
-                    <a href={''} target='_blank' rel='noreferrer'>
+                    {hotel.facebook && (
+                        <a href={hotel.facebook} target='_blank' rel='noreferrer'>
+                            <FaFacebook className='text-primary' />
+                        </a>
+                    )}
+                    {hotel.instagram && (
+                        <a href={hotel.instagram} target='_blank' rel='noreferrer'>
+                            <FaInstagram className='text-pink-500' />
+                        </a>
+                    )}
+                    {hotel.youtube && (
+                        <a href={hotel.youtube} target='_blank' rel='noreferrer'>
+                            <FaYoutube className='text-red-600' />
+                        </a>
+                    )}
+                    {hotel.tiktok && (
+                        <a href={hotel.tiktok} target='_blank' rel='noreferrer'>
+                            <FaTiktok />
+                        </a>
+                    )}
+                    {/* <a href={''} target='_blank' rel='noreferrer'>
                         <FaGlobe />
-                    </a>
+                    </a> */}
                 </div>
             </div>
-            <HotelGallery
-                images={images}
-            />
+            <HotelGallery images={images} />
         </div>
     );
 }

@@ -1,23 +1,21 @@
 import { useEffect, useState } from 'react';
-import { FaUser, FaBed, FaSmokingBan, FaVectorSquare } from 'react-icons/fa';
+import { FaUser, FaBed, FaSmokingBan } from 'react-icons/fa';
 import Facilities from '../../Elements/Facilities';
 import RoomOpt from '../../Elements/RoomOpt';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import Carousel from '../../Elements/Carousel';
-import { image } from 'framer-motion/client';
 import ErrorElement from '../../Elements/ErrorElement';
 
-export default function RoomCard({ checkIn, checkOut, adult, children, handleBook, rooms, loading, roomRates, roomFacilities, formatRupiah }) {
+export default function RoomCard({ handleBook, rooms, loading, roomRates, formatRupiah }) {
     const [carouselImages, setCarouselImages] = useState([]);
-
+    
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/images').then((res) => {
             setCarouselImages(res.data);
         });
     }, []);
-    if (loading) return <ErrorElement />
-
+    if (loading) return <ErrorElement />;
+    
     return (
         <div className='w-full bg-white md:py-10'>
             {rooms.map((room, id) => {
@@ -37,10 +35,7 @@ export default function RoomCard({ checkIn, checkOut, adult, children, handleBoo
                                 )}
 
                                 <h2 className='text-xl font-bold mt-4'>{room.name}</h2>
-                                <p className='text-gray-500 flex items-center gap-2 mt-1' >{room.description.substring(0,70)} ...</p>
-                                {/* <p className='text-gray-500 flex items-center gap-2 mt-1'>
-                                    <FaVectorSquare className='text-primary' /> {room.size} M<sup>2</sup>
-                                </p> */}
+                                <p className='text-gray-500 flex items-center gap-2 mt-1'>{room.description.substring(0, 70)} ...</p>
 
                                 <div className='flex flex-wrap gap-2 mt-3'>
                                     {room.facilities &&

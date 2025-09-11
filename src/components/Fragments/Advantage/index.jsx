@@ -18,7 +18,7 @@ const Advantage = () => {
 
     return (
         advantages.length > 0 && (
-            <section className='w-full max-w-6xl mx-auto px-4 py-8'>
+            <section className='w-full max-w-6xl mx-auto px-4 py-8 md:my-10'>
                 <h2 className='text-2xl font-semibold text-gray-800 mb-6'>Serunya Nginap di Sini</h2>
 
                 <div className='w-full grid gap-4 sm:grid-cols-2 md:grid-cols-4'>

@@ -48,11 +48,11 @@ export default function ReviewCarousel() {
         setCurrent((prev) => (prev - itemsPerSlide < 0 ? reviews.length - itemsPerSlide : prev - itemsPerSlide));
     };
 
-    if(!reviews) return <ErrorElement />;
+    if (!reviews) return <ErrorElement />;
 
     return (
         reviews.length > 0 && (
-            <div className='w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+            <div className='w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:my-10'>
                 <h2 className='text-xl sm:text-2xl font-semibold mb-6 text-center sm:text-left'>Review</h2>
 
                 <ReviewSummary
