@@ -10,7 +10,7 @@ const Advantage = () => {
     useEffect(() => {
         // contoh fetch dari API
         axios.get(`http://127.0.0.1:8000/api/advantage/${slug}`).then((res) => {
-            setAdvantages(res.data.hotel_advantage);
+            setAdvantages(res.data.advantage);
         });
     }, []);
 

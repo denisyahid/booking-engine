@@ -36,7 +36,7 @@ export default function ReviewCarousel() {
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/${slug}/review`).then((res) => {
-            setReviews(res.data.review);
+            setReviews(res.data.hotel_review);
         });
     }, []);
 

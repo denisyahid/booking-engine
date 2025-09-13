@@ -72,9 +72,6 @@ export default function HotelCard() {
                             <FaTiktok />
                         </a>
                     )}
-                    {/* <a href={''} target='_blank' rel='noreferrer'>
-                        <FaGlobe />
-                    </a> */}
                 </div>
             </div>
             <HotelGallery images={images} />
