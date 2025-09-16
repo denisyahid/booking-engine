@@ -48,6 +48,15 @@ export default function ReviewCarousel() {
         setCurrent((prev) => (prev - itemsPerSlide < 0 ? reviews.length - itemsPerSlide : prev - itemsPerSlide));
     };
 
+    useEffect(() => {
+    const interval = setInterval(() => {
+        setCurrent((prev) => (prev + itemsPerSlide >= reviews.length ? 0 : prev + itemsPerSlide));
+    }, 3000);
+
+    return () => clearInterval(interval); // jangan lupa cleanup
+}, [reviews.length]);
+
+
     if (!reviews) return <ErrorElement />;
 
     return (

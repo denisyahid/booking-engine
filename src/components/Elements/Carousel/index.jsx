@@ -26,7 +26,7 @@ const Carousel = ({ images = [], name }) => {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-        }, 5000);
+        }, 3000);
 
         return () => clearInterval(interval); // clear saat unmount
     }, [images.length]);
@@ -38,7 +38,7 @@ const Carousel = ({ images = [], name }) => {
             <div className='relative w-full h-64 md:h-80 overflow-hidden'>
                 <div className='flex transition-transform duration-500 ease-in-out' style={{ transform: `translateX(-${current * 100}%)` }}>
                     {images.map((img, idx) => (
-                        <img
+                        <img loading='lazy'
                             key={idx}
                             src={
                                 img.image
@@ -86,7 +86,7 @@ const Carousel = ({ images = [], name }) => {
             {showPopup && (
                 <div className='fixed inset-0 bg-black/80 flex items-center justify-center z-50'>
                     <div className='relative max-w-3xl w-full p-4'>
-                        <img
+                        <img loading='lazy'
                             src={
                                 images[current].image
                                     ? `${images[current].image}`

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import Hero from '../Hero';
+// import Hero from '../Hero';
+const Hero = React.lazy(() => import('../Hero'));
 import Navbar from '../components/Fragments/Navbar/index';
 import Footer from '../components/Fragments/Footer';
 import BioHotel from '../components/Elements/BioHotel';
@@ -43,6 +44,13 @@ const App = () => {
     const [roomFacilities, setRoomFacilities] = useState([]);
     const [roomRates, setRoomRates] = useState([]);
     const [hotel, setHotel] = useState({});
+    const [range, setRange] = useState([
+            {
+                startDate: new Date(),
+                endDate: new Date(new Date().setDate(new Date().getDate() + 1)),
+                key: 'selection',
+            },
+        ]);
 
     const getTodayDate = () => {
         const today = new Date();
@@ -108,6 +116,26 @@ const App = () => {
         });
     };
 
+    const handleDateChange = (item) => {
+        let { startDate, endDate } = item.selection;
+
+        if (endDate <= startDate) {
+            endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 1);
+        }
+
+        setRange([{ startDate, endDate, key: 'selection' }]);
+
+        // Update ke state App.jsx
+        const checkin = new Date(startDate);
+        checkin.setDate(startDate.getDate() + 1)
+        const checkIn = checkin.toISOString().split('T')[0];
+        const checkOut = endDate.toISOString().split('T')[0];
+
+        setCheckIn(checkIn);
+        setCheckOut(checkOut);
+    };
+
     return (
         <div className='bg-white'>
             <Navbar />
@@ -123,6 +151,8 @@ const App = () => {
                 setAdult={setAdult}
                 setChildren={setChildren}
                 rooms={rooms}
+                handleDateChange={handleDateChange}
+                range={range}
             />
             <BioHotel />
             {(!hasSearchParams || rooms) && <Hero roomsByHotel={rooms} />}

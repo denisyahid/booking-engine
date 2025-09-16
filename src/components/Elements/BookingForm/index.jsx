@@ -2,16 +2,10 @@ import React, { useRef, useState, useEffect } from 'react';
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
+import axios from 'axios';
 
-const BookingForm = ({ slug, adult, children, setAdult, setChildren, rooms,setCheckIn,setCheckOut }) => {
+const BookingForm = ({ slug, adult, children, setAdult, setChildren, handleDateChange ,range}) => {
     const [open, setOpen] = useState(false);
-    const [range, setRange] = useState([
-        {
-            startDate: new Date(),
-            endDate: new Date(new Date().setDate(new Date().getDate() + 1)),
-            key: 'selection',
-        },
-    ]);
 
     const refOne = useRef(null);
 
@@ -36,27 +30,11 @@ const BookingForm = ({ slug, adult, children, setAdult, setChildren, rooms,setCh
         });
     };
 
-    const handleDateChange = (item) => {
-        let { startDate, endDate } = item.selection;
-
-        if (endDate <= startDate) {
-            endDate = new Date(startDate);
-            endDate.setDate(startDate.getDate() + 1);
-        }
-
-        setRange([{ startDate, endDate, key: 'selection' }]);
-
-        // Update ke state App.jsx
-        setCheckIn(startDate.toISOString().split('T')[0]);  
-        setCheckOut(endDate.toISOString().split('T')[0]);  
-        console.log(startDate,endDate);
-    };
+    
 
     const handleSubmit = (e) => {
         e.preventDefault();
         const form = e.target;
-        console.log(form.checkIn.value);
-        console.log(form.checkOut.value);
     };
 
     return (

@@ -3,6 +3,7 @@ import { MapPin, Utensils, Landmark, Mountain,Coffee } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import ErrorElement from '../../Elements/ErrorElement';
+import ExperiencesSection from '../ExperiencesSection';
 
 export default function LocationSection() {
     const [hotel, setHotel] = useState({});
@@ -83,6 +84,7 @@ export default function LocationSection() {
                     )}
                 </div>
             </div>
+            <ExperiencesSection />
         </div>
     );
 }
