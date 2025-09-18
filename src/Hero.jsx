@@ -1,27 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
-export default function Hero({ roomsByHotel = [] }) {
-    const { slug } = useParams();
-    const [rooms, setRooms] = useState([]);
-    const [roomImages, setRoomImages] = useState([]);
+export default function Hero({ roomsByHotel = [] ,rooms, roomImages}) {
     const [currentIndex, setCurrentIndex] = useState(0);
-
-    // ambil data rooms
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/room`).then((res) => {
-            setRooms(res.data);
-        });
-    }, [slug]);
     
-    // ambil data images
-    useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/images').then((res) => {
-            setRoomImages(res.data);
-        });
-    }, []);
-
     const allRooms = roomsByHotel.length > 0 ? roomsByHotel : rooms;
 
     // carousel auto geser tiap 5 detik

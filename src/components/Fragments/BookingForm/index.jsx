@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
-import { GoogleLogin } from '@react-oauth/google';
 import { FcGoogle } from 'react-icons/fc';
 import { FaUserCircle } from 'react-icons/fa';
 import Carousel from '../../Elements/Carousel';
@@ -9,9 +8,8 @@ import Carousel from '../../Elements/Carousel';
 export default function BookingForm() {
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
+    const [roomImage,setRoomImage] = useState([]);
     const [carouselImages, setCarouselImages] = useState([]);
-
-    // const [room, setRoom] = useState({});
     const [rates, setRates] = useState({});
     const [facility, setFacility] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -20,6 +18,7 @@ export default function BookingForm() {
         checkOut: '',
         adult: 0,
         children: 0,
+        roomQuantity: 1,
     });
     const { id } = useParams();
     const location = useLocation();
@@ -118,10 +117,15 @@ export default function BookingForm() {
         return dayName;
     }
 
+    // useEffect(() => {
+    //     axios.get(`http://127.0.0.1:8000/api/${id}/`).then((res) => {
+    //         setCarouselImages(res.data);
+    //     });
+    // }, []);
+
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${id}/`).then((res) => {
-            setCarouselImages(res.data);
-            console.log(res.data)
+        axios.get(`http://127.0.0.1:8000/api/${id}/room/image`).then((res) => {
+            setRoomImage(res.data);
         });
     }, []);
 
@@ -134,6 +138,7 @@ export default function BookingForm() {
             checkOut: bookingUrl.checkOut,
             adult: bookingUrl.adult,
             children: bookingUrl.children,
+            roomQuantity: bookingUrl.roomQuantity
         });
 
         setCheckIn(bookingUrl.checkIn);
@@ -227,17 +232,6 @@ export default function BookingForm() {
                                     />
                                 </div>
                             </div>
-
-                            {/* <div className='flex items-center gap-4 text-sm'>
-                                <label className='flex items-center gap-1'>
-                                    <input type='radio' name='guest' checked={guestType === 'self'} onChange={() => setGuestType('self')} />
-                                    I'm the guest
-                                </label>
-                                <label className='flex items-center gap-1'>
-                                    <input type='radio' name='guest' checked={guestType === 'other'} onChange={() => setGuestType('other')} />
-                                    I'm booking for another person
-                                </label>
-                            </div> */}
                         </div>
 
                         {/* Stay Details */}
@@ -248,6 +242,7 @@ export default function BookingForm() {
                             <div className='space-y-2'>
                                 <p className='font-medium'>{rates.plan}</p>
                                 <ul className='list-disc ml-5 text-sm text-gray-600 space-y-1'>
+                                    <li>{`${bookingData.roomQuantity}`} Room</li>
                                     <li>{`${rates.room.capacity}`} Guest</li>
                                     <li>{`${bookingData.adult}`} Adult</li>
                                     <li>{`${bookingData.children}`} Children</li>
@@ -285,16 +280,16 @@ export default function BookingForm() {
                         {/* Booking Summary */}
                         <div className='border shadow-sm overflow-hidden'>
                             {/* Ganti img jadi Carousel */}
-                            <Carousel images={carouselImages} name={rates.room.name} />
+                            <Carousel height={'68'} images={roomImage} name={rates.room.name} />
 
                             <div className='p-4 space-y-2'>
                                 <h3 className='font-semibold'>{rates.room.name}</h3>
                                 <p className='text-sm text-gray-600'>
                                     {getDayName(checkIn)} {checkIn}
                                     <span className='mx-1'>/</span>
-                                    {getDayName(checkOut)} {checkOut} <br />1 Night • 1 Room • {rates.room.capacity} Guest
+                                    {getDayName(checkOut)} {checkOut} <br />1 Night • {bookingData.roomQuantity} Room • {rates.room.capacity} Guest
                                 </p>
-                                <p className='text-right font-bold text-primary'>{formatRupiah(rates.rate)}</p>
+                                <p className='text-right font-bold text-primary'>{formatRupiah(rates.rate * bookingData.roomQuantity)}</p>
                             </div>
                         </div>
 
@@ -311,7 +306,7 @@ export default function BookingForm() {
                         <div className='border p-4 shadow-sm space-y-4'>
                             <div className='flex justify-between text-lg font-semibold'>
                                 <span>Total</span>
-                                <span className='text-primary'>{formatRupiah(rates.rate)}</span>
+                                <span className='text-primary'>{formatRupiah(rates.rate * bookingData.roomQuantity)}</span>
                             </div>
                             <button type='submit' className='w-full bg-primary text-white py-3 text-lg font-semibold hover:bg-blue-600 transition'>
                                 Continue To Payment

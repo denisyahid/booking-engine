@@ -6,16 +6,9 @@ import axios from 'axios';
 import Carousel from '../../Elements/Carousel';
 import ErrorElement from '../../Elements/ErrorElement';
 
-export default function RoomCard({ handleBook, rooms, loading, formatRupiah, checkIn, checkOut }) {
-    const [carouselImages, setCarouselImages] = useState([]);
+export default function RoomCard({ handleBook, rooms, loading, formatRupiah, checkIn, checkOut,roomImages }) {
     const [roomRates, setRoomRates] = useState([]);
     const [specialPrice, setSpecialPrice] = useState([]);
-
-    useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/images').then((res) => {
-            setCarouselImages(res.data);
-        });
-    }, []);
 
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/room/rate/date').then((res) => {
@@ -30,7 +23,6 @@ export default function RoomCard({ handleBook, rooms, loading, formatRupiah, che
                 params: { checkin: checkIn },
             });
             setSpecialPrice(res.data);
-            console.log(res.data);
         } catch (err) {
             console.error(err);
         }
@@ -49,8 +41,8 @@ export default function RoomCard({ handleBook, rooms, loading, formatRupiah, che
                         <div key={room.id} className='max-w-6xl mx-auto md:my-10 bg-white shadow-md overflow-hidden md:flex'>
                             {/* Left - Image & Facilities */}
                             <div className='md:w-1/2 p-4'>
-                                {carouselImages.filter((image) => image.room_id == room.id).length > 0 ? (
-                                    <Carousel images={carouselImages.filter((image) => image.room_id == room.id)} name={room.name} roomId={room.id} />
+                                {roomImages.filter((image) => image.room_id == room.id).length > 0 ? (
+                                    <Carousel images={roomImages.filter((image) => image.room_id == room.id)} name={room.name} roomId={room.id} />
                                 ) : (
                                     <img loading='lazy'
                                         src='https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop'
@@ -120,7 +112,7 @@ export default function RoomCard({ handleBook, rooms, loading, formatRupiah, che
                                                                 {matchedSpecial ? (
                                                                     <>
                                                                         {/* Harga normal dicoret */}
-                                                                        <p className='mt-3 font-bold text-lg text-red-500 line-through'>
+                                                                        <p className='mt-3 font-bold text-md leading-none text-red-500 line-through'>
                                                                             {formatRupiah(rate.rate)}
                                                                         </p>
                                                                         {/* Harga spesial */}

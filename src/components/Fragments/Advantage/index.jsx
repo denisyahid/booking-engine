@@ -1,11 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import ErrorElement from '../../Elements/ErrorElement/index';
 
-const Advantage = () => {
+const Advantage = ({slug}) => {
     const [advantages, setAdvantages] = useState([]);
-    const { slug } = useParams();
 
     useEffect(() => {
         // contoh fetch dari API

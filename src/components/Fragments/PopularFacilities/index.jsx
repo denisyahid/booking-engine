@@ -17,13 +17,11 @@ import {
     FaBicycle,
     // FaBycycle,
 } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
 
-export default function Facilities() {
+export default function Facilities({slug}) {
     const [showAll, setShowAll] = useState(false);
     const [facilities, setFacilities] = useState([]);
     const [facilityCategories, setFacilityCategories] = useState([]);
-    const { slug } = useParams();
 
     // Mapping icon string → komponen react-icons
     const iconMap = {

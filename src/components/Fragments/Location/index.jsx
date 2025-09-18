@@ -1,20 +1,12 @@
 import axios from 'axios';
-import { MapPin, Utensils, Landmark, Mountain,Coffee } from 'lucide-react';
+import {  Utensils, Landmark, Mountain,Coffee } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import ErrorElement from '../../Elements/ErrorElement';
 import ExperiencesSection from '../ExperiencesSection';
 
-export default function LocationSection() {
-    const [hotel, setHotel] = useState({});
+export default function LocationSection({hotel,slug}) {
     const [nearby, setNearby] = useState([]);
-    const { slug } = useParams();
 
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/hotel/${slug}`).then((res) => {
-            setHotel(res.data);
-        });
-    }, []);
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/${slug}/nearby`).then((res) => {
@@ -61,7 +53,7 @@ export default function LocationSection() {
                         <div>
                             <h3 className='font-semibold mb-2'>Destinasi Terdekat</h3>
                             <div className='space-y-3'>
-                                {nearby.map((item, idx) => (
+                                {nearby.slice(0,3).map((item, idx) => (
                                     <a
                                         href='#'
                                         key={idx}

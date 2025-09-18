@@ -1,12 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
-export default function FAQ() {
+export default function FAQ({slug}) {
     const [openIndex, setOpenIndex] = useState(null);
     const [faqs, setFaqs] = useState([]);
-    const { slug } = useParams();
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/${slug}/faq`).then((res) => {

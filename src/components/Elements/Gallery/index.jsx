@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function HotelGallery({ images = [] }) {
+export default function Gallery({ images = [] }) {
     const [selectedImage, setSelectedImage] = useState(null);
 
     return (
