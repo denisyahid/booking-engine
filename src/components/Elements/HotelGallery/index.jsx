@@ -10,7 +10,7 @@ export default function HotelGallery({ images = [] }) {
                 {images.slice(0, 5).map((img, i) => (
                     <div
                         key={i}
-                        className={`relative cursor-pointer rounded-lg overflow-hidden ${i === 0 ? 'col-span-2 row-span-2' : ''}`}
+                        className={`relative cursor-pointer rounded overflow-hidden ${i === 0 ? 'col-span-2 row-span-2' : ''}`}
                         onClick={() => setSelectedImage(img)}>
                         <img src={img} alt={`Hotel ${i}`} className='w-full h-full object-cover hover:scale-105 transition-transform duration-300' />
                     </div>

@@ -75,7 +75,7 @@ export default function RoomCard({ handleBook, rooms, loading, formatRupiah }) {
                                                     <div className='flex justify-between items-center'>
                                                         <div>
                                                             {rate.room_rate_dates && rate.room_rate_dates.length > 0 ? (
-                                                                <p className='mt-3 font-bold text-lg text-primary'>{formatRupiah(rate.rate)}</p>
+                                                                <p className='mt-3 font-bold text-lg text-primary line-through'>{formatRupiah(rate.rate)}</p>
                                                             ) : (
                                                                 <p className='mt-3 font-bold text-lg text-primary'>{formatRupiah(rate.rate)}</p>
                                                             )}

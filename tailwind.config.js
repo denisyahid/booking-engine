@@ -4,11 +4,11 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Lato', 'sans-serif'], // ganti default font sans jadi Lato
+                sans: ['Lato', 'sans-serif'],
             },
             colors: {
-                primary: '#0079FF', // warna kustom
-                secondary: '#FF5722', // contoh tambahan
+                primary: '#0079FF', 
+                secondary: '#FF5722',
             },
         },
     },
