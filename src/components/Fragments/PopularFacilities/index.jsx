@@ -63,7 +63,7 @@ export default function Facilities({slug}) {
                     .filter((facility) => facility.is_popular == true)
                     .slice(0, showAll ? facilities.length : 8)
                     .map((item, idx) => (
-                        <div key={idx} className='flex items-center gap-3 text-gray-700 border rounded-lg p-4 shadow-sm'>
+                        <div key={idx} className='flex items-center gap-3 text-gray-700 border p-4 shadow-sm'>
                             <span className='text-primary text-lg'>{iconMap[item.icon] ?? '❓'}</span>
                             <span className='text-sm md:text-base font-medium'>{item.name}</span>
                         </div>

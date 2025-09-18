@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { Play } from 'lucide-react'; // ikon play
 
 // 🔹 Komponen video card terpisah
-function VideoCard({ videoSrc }) {
+function VideoCard({ videoSrc,slug }) {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
@@ -19,7 +19,7 @@ function VideoCard({ videoSrc }) {
         <div className='relative w-full aspect-square bg-gray-200 overflow-hidden shadow-sm'>
             <video ref={videoRef} className='w-full h-full object-cover' src={videoSrc} controls={false} />
             {!isPlaying && (
-                <a href='' className='absolute inset-0 flex items-center justify-center'>
+                <a href={`/destination/${slug}`} className='absolute inset-0 flex items-center justify-center'>
                     <span className='flex items-center justify-center w-12 h-12 rounded-full bg-primary shadow-lg hover:bg-primary/80 transition'>
                         <Play className='w-6 h-6 text-white' />
                     </span>
@@ -45,7 +45,7 @@ export default function ExperiencesSection({ items = [] }) {
             {/* Header */}
             <div className='flex items-center justify-between py-8 mb-4'>
                 <h2 className='text-lg md:text-xl font-semibold text-gray-800'>Experiences waiting for you</h2>
-                <a href='#' className='text-blue-600 text-md font-medium hover:underline'>
+                <a href={`/destination`} className='text-blue-600 text-md font-medium hover:underline'>
                     Lihat semua
                 </a>
             </div>
@@ -56,7 +56,7 @@ export default function ExperiencesSection({ items = [] }) {
                     destination
                         .filter((nearby) => nearby.is_nearby == false)
                         .slice(0, visibleCount)
-                        .map((item, idx) => <VideoCard key={idx} videoSrc={item.video} />)}
+                        .map((item, idx) => <VideoCard slug={item.slug} key={idx} videoSrc={item.video} />)}
             </div>
         </section>
     );
