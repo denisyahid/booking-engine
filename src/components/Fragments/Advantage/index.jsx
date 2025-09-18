@@ -1,11 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import ErrorElement from '../../Elements/ErrorElement/index';
 
-const Advantage = () => {
+const Advantage = ({slug}) => {
     const [advantages, setAdvantages] = useState([]);
-    const { slug } = useParams();
 
     useEffect(() => {
         // contoh fetch dari API
@@ -23,7 +21,7 @@ const Advantage = () => {
 
                 <div className='w-full grid gap-4 sm:grid-cols-2 md:grid-cols-4'>
                     {advantages.map((item) => (
-                        <div key={item.id} className=' flex flex-col h-[15rem] border items-center justify-center text-center gap-3 bg-white shadow p-4'>
+                        <div key={item.id} className=' flex flex-col h-[12rem] border items-center justify-center text-center gap-3 bg-white shadow p-4'>
                             <span className='text-4xl'>{item.icon}</span>
                             <div>
                                 <h3 className='font-semibold text-gray-800'>{item.name}</h3>

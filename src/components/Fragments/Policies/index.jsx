@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import ErrorElement from '../../Elements/ErrorElement';
 
-export default function Policies() {
+export default function Policies({slug}) {
     const [policies, setPolicies] = useState([]);
-    const { slug } = useParams();
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/${slug}/policies`).then((res) => {

@@ -1,27 +1,9 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
-export default function Hero({ roomsByHotel = [] }) {
-    const { slug } = useParams();
-    const [rooms, setRooms] = useState([]);
-    const [roomImages, setRoomImages] = useState([]);
+export default function Hero({ roomsByHotel = [] ,rooms, roomImages}) {
     const [currentIndex, setCurrentIndex] = useState(0);
-
-    // ambil data rooms
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/room`).then((res) => {
-            setRooms(res.data);
-        });
-    }, [slug]);
-
-    // ambil data images
-    useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/images').then((res) => {
-            setRoomImages(res.data);
-        });
-    }, []);
-
+    
     const allRooms = roomsByHotel.length > 0 ? roomsByHotel : rooms;
 
     // carousel auto geser tiap 5 detik
@@ -29,7 +11,7 @@ export default function Hero({ roomsByHotel = [] }) {
         if (allRooms.length > 3) {
             const interval = setInterval(() => {
                 handleNext();
-            }, 5000);
+            }, 3000);
 
             return () => clearInterval(interval);
         }
@@ -70,14 +52,21 @@ export default function Hero({ roomsByHotel = [] }) {
                             {getVisibleRooms().map((room) => {
                                 const images = roomImages.filter((image) => image.room_id === room.id);
                                 return (
-                                    <article key={room.id} className='w-full md:w-1/3 flex-shrink-0 px-4'>
-                                        <div className='bg-white shadow rounded-md overflow-hidden'>
+                                    <article
+                                        key={room.id}
+                                        className='w-full md:w-1/3 flex-shrink-0 px-4'
+                                    >
+                                        <div className='bg-white shadow overflow-hidden'>
                                             <div className='relative'>
                                                 {images.length > 0 ? (
-                                                    <img src={images[0].image} alt={room.name} className='w-full h-48 md:h-56 object-cover' />
+                                                    <img loading='lazy'
+                                                        src={images[0].image}
+                                                        alt={room.name}
+                                                        className='w-full h-48 md:h-56 object-cover'
+                                                    />
                                                 ) : (
-                                                    <img
-                                                        src='https://via.placeholder.com/400x300?text=No+Image'
+                                                    <img loading='lazy'
+                                                        src='test'
                                                         alt='no image'
                                                         className='w-full h-48 md:h-56 object-cover'
                                                     />

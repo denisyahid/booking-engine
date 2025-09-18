@@ -1,29 +1,11 @@
-import { useEffect, useState } from 'react';
+import {  useState } from 'react';
 import { FaMapMarkerAlt, FaStar } from 'react-icons/fa';
 import { FaFacebook, FaInstagram, FaYoutube, FaTiktok, FaGlobe } from 'react-icons/fa';
-import { useParams } from 'react-router-dom';
-import axios from 'axios';
 import ErrorElement from '../ErrorElement';
-import HotelGallery from '../HotelGallery';
+import Gallery from '../Gallery';
 
-export default function HotelCard() {
-    const [hotel, setHotel] = useState({});
+export default function BioHotel({hotel,images}) {
     const [showMore, setShowMore] = useState(false);
-    const [images, setImages] = useState([]);
-    const { slug } = useParams();
-
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/hotel/${slug}`).then((res) => {
-            setHotel(res.data);
-        });
-    }, []);
-
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/image`).then((res) => {
-            const images = res.data.map((data) => data.image);
-            setImages(images);
-        });
-    }, []);
 
     if (!hotel) return <ErrorElement />;
 
@@ -74,7 +56,7 @@ export default function HotelCard() {
                     )}
                 </div>
             </div>
-            <HotelGallery images={images} />
+            <Gallery images={images} />
         </div>
     );
 }

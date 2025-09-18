@@ -2,14 +2,12 @@ import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ReviewSummary from '../../Elements/ReviewSummary';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
 import ErrorElement from '../../Elements/ErrorElement';
 
-export default function ReviewCarousel() {
+export default function ReviewCarousel({slug}) {
     const [reviews, setReviews] = useState([]);
     const [current, setCurrent] = useState(0);
     const itemsPerSlide = 2; // tampilkan 2 review per slide
-    const { slug } = useParams();
 
     function getDayName(dateString) {
         // Pastikan input adalah string dalam format YYYY-MM-DD
@@ -47,6 +45,15 @@ export default function ReviewCarousel() {
     const prevSlide = () => {
         setCurrent((prev) => (prev - itemsPerSlide < 0 ? reviews.length - itemsPerSlide : prev - itemsPerSlide));
     };
+
+    useEffect(() => {
+    const interval = setInterval(() => {
+        setCurrent((prev) => (prev + itemsPerSlide >= reviews.length ? 0 : prev + itemsPerSlide));
+    }, 3000);
+
+    return () => clearInterval(interval); // jangan lupa cleanup
+}, [reviews.length]);
+
 
     if (!reviews) return <ErrorElement />;
 

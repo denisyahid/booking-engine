@@ -1,19 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import {useParams} from 'react-router-dom';
-import axios from 'axios';
 import ErrorElement from '../../Elements/ErrorElement';
 
-export default function Navbar() {
-    const [open, setOpen] = useState(false);
-    const [hotel,setHotel] = useState({}); 
-    const {slug} = useParams();
-
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/hotel/${slug}`).then((res) => {
-            setHotel(res.data);
-        });
-    }, []);
-
+export default function Navbar({hotel}) {
 
     if(!hotel.name) return <ErrorElement />
 

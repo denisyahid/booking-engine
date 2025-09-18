@@ -6,15 +6,9 @@ import axios from 'axios';
 import Carousel from '../../Elements/Carousel';
 import ErrorElement from '../../Elements/ErrorElement';
 
-export default function RoomCard({ handleBook, rooms, loading, formatRupiah }) {
-    const [carouselImages, setCarouselImages] = useState([]);
+export default function RoomCard({ handleBook, rooms, loading, formatRupiah, checkIn, checkOut,roomImages }) {
     const [roomRates, setRoomRates] = useState([]);
-
-    useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/images').then((res) => {
-            setCarouselImages(res.data);
-        });
-    }, []);
+    const [specialPrice, setSpecialPrice] = useState([]);
 
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/room/rate/date').then((res) => {
@@ -22,8 +16,23 @@ export default function RoomCard({ handleBook, rooms, loading, formatRupiah }) {
         });
     }, []);
 
-    if (loading) return <ErrorElement />;
+    // Fetch rates sesuai tanggal
+    const fetchRates = async () => {
+        try {
+            const res = await axios.get(`http://127.0.0.1:8000/api/specialrate`, {
+                params: { checkin: checkIn },
+            });
+            setSpecialPrice(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
 
+    useEffect(() => {
+        fetchRates();
+    }, [checkIn, checkOut]); // update otomatis kalau tanggal berubah
+
+    if (loading) return <ErrorElement />;
     return (
         <div className='w-full bg-white md:py-10'>
             {rooms.map((room, id) => {
@@ -32,10 +41,10 @@ export default function RoomCard({ handleBook, rooms, loading, formatRupiah }) {
                         <div key={room.id} className='max-w-6xl mx-auto md:my-10 bg-white shadow-md overflow-hidden md:flex'>
                             {/* Left - Image & Facilities */}
                             <div className='md:w-1/2 p-4'>
-                                {carouselImages.filter((image) => image.room_id == room.id).length > 0 ? (
-                                    <Carousel images={carouselImages.filter((image) => image.room_id == room.id)} name={room.name} roomId={room.id} />
+                                {roomImages.filter((image) => image.room_id == room.id).length > 0 ? (
+                                    <Carousel images={roomImages.filter((image) => image.room_id == room.id)} name={room.name} roomId={room.id} />
                                 ) : (
-                                    <img
+                                    <img loading='lazy'
                                         src='https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop'
                                         alt={room.name}
                                         className=' w-full h-64 md:h-80 object-cover'
@@ -54,7 +63,7 @@ export default function RoomCard({ handleBook, rooms, loading, formatRupiah }) {
                             {/* Right - Rates */}
                             <div className='md:w-1/2 p-4'>
                                 {roomRates
-                                    .filter((rate) => rate.room_id == room.id)
+                                    .filter((rate) => rate.room_id == room.id) // Rates ditampilkan sesuai roomnya
                                     .map((rate) => (
                                         <div key={rate.id} className='md:w-full p-4 flex flex-col gap-4'>
                                             <div className='border p-4 shadow-sm hover:shadow-md transition'>
@@ -70,34 +79,127 @@ export default function RoomCard({ handleBook, rooms, loading, formatRupiah }) {
                                                     <RoomOpt icon={<FaBed />} text={`${room.number_of_bed} Bed`} />
                                                     {!rate.smoking_policy && <RoomOpt icon={<FaSmokingBan />} text='Non Smoking' />}
                                                 </div>
+                                                {(() => {
+                                                    // Ambil semua harga spesial untuk room_rate ini
+                                                    const specialsForRate = specialPrice.filter((special) => special.room_rate_id === rate.id);
 
-                                                {rate.rate && (
-                                                    <div className='flex justify-between items-center'>
-                                                        <div>
-                                                            {rate.room_rate_dates && rate.room_rate_dates.length > 0 ? (
-                                                                <p className='mt-3 font-bold text-lg text-primary line-through'>{formatRupiah(rate.rate)}</p>
-                                                            ) : (
-                                                                <p className='mt-3 font-bold text-lg text-primary'>{formatRupiah(rate.rate)}</p>
-                                                            )}
+                                                    if (specialsForRate.length === 0) {
+                                                        // Kalau tidak ada harga spesial → tampil harga normal
+                                                        return (
+                                                            <div className='flex justify-between items-center'>
+                                                                <div>
+                                                                    <p className='mt-3 font-bold text-lg text-primary'>{formatRupiah(rate.rate)}</p>
+                                                                    <p className='text-xs text-gray-500'>Total for 1 room includes taxes & fee</p>
+                                                                </div>
+                                                                <button
+                                                                    id={rate.id}
+                                                                    onClick={handleBook}
+                                                                    className='bg-primary h-10 text-white px-6 py-0 shadow'>
+                                                                    Book
+                                                                </button>
+                                                            </div>
+                                                        );
+                                                    }
 
-                                                            {/* Kalau ada harga promo (min_price < rate.rate), tampilkan detail dari room_rate_dates */}
-                                                            {rate.min_price < rate.rate &&
-                                                                rate.room_rate_dates &&
-                                                                rate.room_rate_dates.length > 0 && (
-                                                                    <div className='mt-1 text-sm text-red-600'>
-                                                                        {rate.room_rate_dates.map((rDate) => (
-                                                                            <p className='text-xs my-2' key={rDate.id}>
-                                                                                Tersedia harga {formatRupiah(rDate.special_price)} jika checkout pada
-                                                                                tanggal{' '}
-                                                                                {new Date(rDate.date).toLocaleDateString('id-ID', {
-                                                                                    day: 'numeric',
-                                                                                    month: 'long',
-                                                                                })}
-                                                                            </p>
-                                                                        ))}
-                                                                    </div>
+                                                    // Cari harga termurah
+                                                    const lowestPrice = Math.min(...specialsForRate.map((s) => s.special_price));
+                                                    // Cari data spesial yang sesuai tanggal checkIn
+                                                    const matchedSpecial = specialsForRate.find((s) => s.date === checkIn);
+
+                                                    return (
+                                                        <div className='flex justify-between items-center'>
+                                                            <div>
+                                                                {matchedSpecial ? (
+                                                                    <>
+                                                                        {/* Harga normal dicoret */}
+                                                                        <p className='mt-3 font-bold text-md leading-none text-red-500 line-through'>
+                                                                            {formatRupiah(rate.rate)}
+                                                                        </p>
+                                                                        {/* Harga spesial */}
+                                                                        <p className='font-bold text-lg text-primary'>
+                                                                            {formatRupiah(matchedSpecial.special_price)}
+                                                                        </p>
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        {/* Harga normal */}
+                                                                        <p className='mt-3 font-bold text-lg text-primary'>
+                                                                            {formatRupiah(rate.rate)}
+                                                                        </p>
+                                                                        {/* Keterangan harga termurah */}
+                                                                        {lowestPrice < rate.rate && (
+                                                                            <div className='mt-1 text-sm text-red-600'>
+                                                                                <p className='text-xs my-2'>
+                                                                                    Tersedia harga lebih murah {formatRupiah(lowestPrice)} pada
+                                                                                    tanggal{' '}
+                                                                                    {new Date(
+                                                                                        specialsForRate.find(
+                                                                                            (s) => s.special_price === lowestPrice,
+                                                                                        ).date,
+                                                                                    ).toLocaleDateString('id-ID', {
+                                                                                        day: 'numeric',
+                                                                                        month: 'long',
+                                                                                    })}
+                                                                                </p>
+                                                                            </div>
+                                                                        )}
+                                                                    </>
                                                                 )}
 
+                                                                <p className='text-xs text-gray-500'>Total for 1 room includes taxes & fee</p>
+                                                            </div>
+
+                                                            <button
+                                                                id={rate.id}
+                                                                onClick={handleBook}
+                                                                className='bg-primary h-10 text-white px-6 py-0 shadow'>
+                                                                Book
+                                                            </button>
+                                                        </div>
+                                                    );
+                                                })()}
+
+                                                {/* {specialPrice.length > 0 ? (
+                                                    specialPrice.filter((special) => special.room_id === rate.room_id).map((special) => {
+                                                        const lowerPrice = special.filter((lower) => Math.min(lower.special_price));
+                                                        <div className='flex justify-between items-center'>
+                                                            <div>
+                                                                {checkIn == specialPrice.date ? (
+                                                                    <div className=''>
+                                                                        <p className='mt-3 font-bold text-lg text-red-500 line-through'>
+                                                                            {formatRupiah(rate.rate)}
+                                                                        </p>
+                                                                        <p className='font-bold text-lg text-primary'>{formatRupiah(rate.rate)}</p>
+                                                                    </div>
+                                                                ) : (
+                                                                    <p className='mt-3 font-bold text-lg text-primary'>{formatRupiah(rate.rate)}</p>
+                                                                )}
+                                                                {checkIn != specialPrice.date && (
+                                                                    <div className='mt-1 text-sm text-red-600'>
+                                                                        <p className='text-xs my-2' key={specialPrice.id}>
+                                                                            Tersedia harga {formatRupiah(specialPrice.special_price)} jika checkout
+                                                                            pada tanggal{' '}
+                                                                            {new Date(specialPrice.date).toLocaleDateString('id-ID', {
+                                                                                day: 'numeric',
+                                                                                month: 'long',
+                                                                            })}
+                                                                        </p>
+                                                                    </div>
+                                                                )}
+                                                                <p className='text-xs text-gray-500'>Total for 1 room includes taxes & fee</p>
+                                                            </div>
+                                                            <button
+                                                                id={rate.id}
+                                                                onClick={handleBook}
+                                                                className='bg-primary h-10 text-white px-6 py-0 shadow'>
+                                                                Book
+                                                            </button>
+                                                        </div>;
+                                                    })
+                                                ) : (
+                                                    <div className='flex justify-between items-center'>
+                                                        <div>
+                                                            <p className='mt-3 font-bold text-lg text-primary'>{formatRupiah(rate.rate)}</p>
                                                             <p className='text-xs text-gray-500'>Total for 1 room includes taxes & fee</p>
                                                         </div>
                                                         <button
@@ -107,7 +209,7 @@ export default function RoomCard({ handleBook, rooms, loading, formatRupiah }) {
                                                             Book
                                                         </button>
                                                     </div>
-                                                )}
+                                                )} */}
                                             </div>
                                         </div>
                                     ))}

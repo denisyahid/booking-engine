@@ -12,7 +12,7 @@ import LocationSection from '../components/Fragments/Location';
 import AboutSection from '../components/Fragments/About';
 import Advantage from '../components/Fragments/Advantage';
 import Facilities from '../components/Fragments/PopularFacilities';
-import Policies from '../components/Fragments/Policies'
+import Policies from '../components/Fragments/Policies';
 import FAQ from '../components/Fragments/FAQ';
 
 const App = () => {
@@ -39,10 +39,20 @@ const App = () => {
     const [checkOut, setCheckOut] = useState(queryParams.get('checkOut') || getTomorrow());
     const [adult, setAdult] = useState(Number(queryParams.get('adult')) || 1);
     const [children, setChildren] = useState(Number(queryParams.get('children')) || 0);
+    const [roomQuantity, setRoomQuantity] = useState(Number(queryParams.get('rooms')) || 1);
     const [rooms, setRooms] = useState([]);
+    const [roomImages, setRoomImages] = useState([]);
     const [roomFacilities, setRoomFacilities] = useState([]);
     const [roomRates, setRoomRates] = useState([]);
     const [hotel, setHotel] = useState({});
+    const [hotelImages, setHotelImages] = useState([]);
+    const [range, setRange] = useState([
+        {
+            startDate: new Date(),
+            endDate: new Date(new Date().setDate(new Date().getDate() + 1)),
+            key: 'selection',
+        },
+    ]);
 
     const getTodayDate = () => {
         const today = new Date();
@@ -52,9 +62,18 @@ const App = () => {
         return `${year}-${month}-${day}`;
     };
 
+    // Hotel
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/hotel/${slug}`).then((res) => {
             setHotel(res.data);
+        });
+    }, []);
+
+    // Hotel Images
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/${slug}/image`).then((res) => {
+            const images = res.data.map((data) => data.image);
+            setHotelImages(images);
         });
     }, []);
 
@@ -69,6 +88,13 @@ const App = () => {
             .catch((err) => {
                 setLoading(false);
             });
+    }, []);
+
+    // Room Images
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/api/images').then((res) => {
+            setRoomImages(res.data);
+        });
     }, []);
 
     // Facilities
@@ -95,7 +121,6 @@ const App = () => {
     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
     const handleBook = (e) => {
-        console.log(checkIn, checkOut);
         const bookingId = e.target.id;
         navigate(`/booking/${bookingId}`, {
             state: {
@@ -104,13 +129,36 @@ const App = () => {
                 checkOut,
                 adult,
                 children,
+                roomQuantity,
             },
         });
     };
 
+    const handleDateChange = (item) => {
+        let { startDate, endDate } = item.selection;
+
+        if (endDate <= startDate) {
+            endDate = new Date(startDate);
+            endDate.setDate(startDate.getDate() + 1);
+        }
+
+        setRange([{ startDate, endDate, key: 'selection' }]);
+
+        // Update ke state App.jsx
+        const checkin = new Date(startDate);
+        checkin.setDate(startDate.getDate() + 1);
+        const checkout = new Date(endDate);
+        checkout.setDate(endDate.getDate() + 1);
+        const checkIn = checkin.toISOString().split('T')[0];
+        const checkOut = checkout.toISOString().split('T')[0];
+
+        setCheckIn(checkIn);
+        setCheckOut(checkOut);
+    };
+
     return (
         <div className='bg-white'>
-            <Navbar />
+            <Navbar hotel={hotel} />
             <BookingForm
                 slug={slug}
                 getTodayDate={getTodayDate}
@@ -118,14 +166,18 @@ const App = () => {
                 checkOut={checkOut}
                 adult={adult}
                 children={children}
+                roomQuantity={roomQuantity}
                 setCheckIn={setCheckIn}
                 setCheckOut={setCheckOut}
                 setAdult={setAdult}
                 setChildren={setChildren}
+                setRoomQuantity={setRoomQuantity}
                 rooms={rooms}
+                handleDateChange={handleDateChange}
+                range={range}
             />
-            <BioHotel />
-            {(!hasSearchParams || rooms) && <Hero roomsByHotel={rooms} />}
+            <BioHotel hotel={hotel} images={hotelImages}  />
+            {(!hasSearchParams || rooms) && <Hero roomsByHotel={rooms} rooms={rooms} roomImages={roomImages} />}
             <RoomCard
                 checkIn={checkIn}
                 checkOut={checkOut}
@@ -135,17 +187,18 @@ const App = () => {
                 formatRupiah={formatRupiah}
                 loading={loading}
                 rooms={rooms}
+                roomImages={roomImages}
                 roomFacilities={roomFacilities}
                 roomRates={roomRates}
             />
-            <Advantage />
-            <ReviewCarousel />
-            <Facilities />
-            <LocationSection />
-            <Policies />
+            <Advantage slug={slug}/>
+            <ReviewCarousel slug={slug} />
+            <Facilities slug={slug} />
+            <LocationSection hotel={hotel} slug={slug} />
+            <Policies slug={slug} />
             <AboutSection description={hotel.description} title={hotel.name} />
-            <FAQ />
-            <Footer />
+            <FAQ slug={slug} />
+            <Footer hotel={hotel} />
         </div>
     );
 };

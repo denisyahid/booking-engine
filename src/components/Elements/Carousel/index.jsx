@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 
-const Carousel = ({ images = [], name }) => {
+const Carousel = ({ images = [], name ,height = 80}) => {
     const [current, setCurrent] = useState(0);
     const [showPopup, setShowPopup] = useState(false);
 
@@ -26,7 +26,7 @@ const Carousel = ({ images = [], name }) => {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-        }, 5000);
+        }, 3000);
 
         return () => clearInterval(interval); // clear saat unmount
     }, [images.length]);
@@ -35,18 +35,18 @@ const Carousel = ({ images = [], name }) => {
     return (
         <>
             {/* Carousel */}
-            <div className='relative w-full h-64 md:h-80 overflow-hidden'>
+            <div className={`relative w-full h-64 md:h-${height} overflow-hidden`}>
                 <div className='flex transition-transform duration-500 ease-in-out' style={{ transform: `translateX(-${current * 100}%)` }}>
                     {images.map((img, idx) => (
-                        <img
+                        <img loading='lazy'
                             key={idx}
                             src={
                                 img.image
-                                    ? `${img.image}`
+                                    ? `/${img.image}`
                                     : 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop'
                             }
                             alt={`${name}-${idx}`}
-                            className='w-full h-64 md:h-80 object-cover flex-shrink-0 cursor-pointer'
+                            className='w-full h-64 md:h-80 object-cover object-bottom flex-shrink-0 cursor-pointer'
                             onClick={() => setShowPopup(true)} // 👈 klik gambar buka popup
                         />
                     ))}
@@ -86,7 +86,7 @@ const Carousel = ({ images = [], name }) => {
             {showPopup && (
                 <div className='fixed inset-0 bg-black/80 flex items-center justify-center z-50'>
                     <div className='relative max-w-3xl w-full p-4'>
-                        <img
+                        <img loading='lazy'
                             src={
                                 images[current].image
                                     ? `${images[current].image}`
