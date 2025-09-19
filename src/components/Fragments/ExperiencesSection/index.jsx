@@ -29,9 +29,9 @@ function VideoCard({ videoSrc,slug }) {
     );
 }
 
-export default function ExperiencesSection({ items = [] }) {
+export default function ExperiencesSection({ destinations = [] }) {
     const [visibleCount] = useState(6);
-    const [destination, setDestination] = useState([]);
+    // const [destination, setDestination] = useState([]);
     const { slug } = useParams();
 
     useEffect(() => {
@@ -52,8 +52,8 @@ export default function ExperiencesSection({ items = [] }) {
 
             {/* Grid Items */}
             <div className='grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3'>
-                {destination.length > 0 &&
-                    destination
+                {destinations.length > 0 &&
+                    destinations
                         .filter((nearby) => nearby.is_nearby == false)
                         .slice(0, visibleCount)
                         .map((item, idx) => <VideoCard slug={item.slug} key={idx} videoSrc={item.video} />)}

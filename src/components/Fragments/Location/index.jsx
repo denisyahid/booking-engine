@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import ErrorElement from '../../Elements/ErrorElement';
 import ExperiencesSection from '../ExperiencesSection';
 
-export default function LocationSection({hotel,slug}) {
+export default function LocationSection({hotel,slug,destinations}) {
     const [nearby, setNearby] = useState([]);
 
 
@@ -76,7 +76,7 @@ export default function LocationSection({hotel,slug}) {
                     )}
                 </div>
             </div>
-            <ExperiencesSection />
+            <ExperiencesSection destinations={destinations} />
         </div>
     );
 }

@@ -54,6 +54,7 @@ export default function DestinationPage() {
     });
     const [destinations, setDestinations] = useState([]);
 
+
     // Destination
     useEffect(() => {
         axios.get('http://127.0.0.1:8000/api/destination').then((res) => {

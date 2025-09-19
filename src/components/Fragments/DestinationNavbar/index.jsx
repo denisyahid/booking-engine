@@ -9,7 +9,10 @@ export default function DestinationNavbar() {
             <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
                 <div className='flex justify-between h-16 items-center'>
                     {/* Logo */}
-                    <div className='flex-shrink-0 text-2xl font-bold text-blue-600'>Najjo</div>
+                    <div className='flex-shrink-0 text-2xl font-bold text-blue-600'>
+                        {/* Najjo */}
+                        <img className='w-24' src="https://assets.zyrosite.com/cdn-cgi/image/format=auto,w=140,fit=crop,q=95/dWxb12zNMXS08Rzz/najjo-logo-2---rectangle-m5KbZENbyRtoqrXd.png" alt="" />
+                    </div>
 
                     {/* Menu Desktop */}
                     <div className='hidden md:flex space-x-6 items-center'>
