@@ -17,6 +17,7 @@ function VideoCard({ videoSrc,slug }) {
 
     return (
         <div className='relative w-full aspect-square bg-gray-200 overflow-hidden shadow-sm'>
+            {/* <img className='w-full h-full object-cover' src="/images/room1.jpg" alt="" /> */}
             <video ref={videoRef} className='w-full h-full object-cover' src={videoSrc} controls={false} />
             {!isPlaying && (
                 <a href={`/destination/${slug}`} className='absolute inset-0 flex items-center justify-center'>

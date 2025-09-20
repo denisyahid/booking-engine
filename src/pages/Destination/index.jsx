@@ -3,41 +3,41 @@ import { useEffect, useState } from 'react';
 import DestinationNavbar from '../../components/Fragments/DestinationNavbar';
 import DestinationHero from '../../components/Fragments/DestinationHero';
 
-const destinations = [
-    {
-        id: 1,
-        title: 'Derawan Whale Shark Labuan Cermin Tours - 4 Days 3 Nights',
-        location: 'Derawan, Berau',
-        rating: 7.0,
-        reviews: 2,
-        price: 4014700,
-        oldPrice: 5100000,
-        discount: 20,
-        img: 'https://via.placeholder.com/400x250?text=Derawan',
-    },
-    {
-        id: 2,
-        title: 'Mount Bromo Sunrise Tour - 1 Day',
-        location: 'Bromo (AREA)',
-        rating: 8.9,
-        reviews: 774,
-        price: 322230,
-        oldPrice: 431000,
-        discount: 25,
-        img: 'https://via.placeholder.com/400x250?text=Bromo',
-    },
-    {
-        id: 3,
-        title: 'Ijen Crater Tour',
-        location: 'Licin, Banyuwangi',
-        rating: 9.5,
-        reviews: 56,
-        price: 180630,
-        oldPrice: 350000,
-        discount: 50,
-        img: 'https://via.placeholder.com/400x250?text=Ijen',
-    },
-];
+// const destinations = [
+//     {
+//         id: 1,
+//         title: 'Derawan Whale Shark Labuan Cermin Tours - 4 Days 3 Nights',
+//         location: 'Derawan, Berau',
+//         rating: 7.0,
+//         reviews: 2,
+//         price: 4014700,
+//         oldPrice: 5100000,
+//         discount: 20,
+//         img: 'https://via.placeholder.com/400x250?text=Derawan',
+//     },
+//     {
+//         id: 2,
+//         title: 'Mount Bromo Sunrise Tour - 1 Day',
+//         location: 'Bromo (AREA)',
+//         rating: 8.9,
+//         reviews: 774,
+//         price: 322230,
+//         oldPrice: 431000,
+//         discount: 25,
+//         img: 'https://via.placeholder.com/400x250?text=Bromo',
+//     },
+//     {
+//         id: 3,
+//         title: 'Ijen Crater Tour',
+//         location: 'Licin, Banyuwangi',
+//         rating: 9.5,
+//         reviews: 56,
+//         price: 180630,
+//         oldPrice: 350000,
+//         discount: 50,
+//         img: 'https://via.placeholder.com/400x250?text=Ijen',
+//     },
+// ];
 
 export default function DestinationPage() {
     const [filters, setFilters] = useState({
