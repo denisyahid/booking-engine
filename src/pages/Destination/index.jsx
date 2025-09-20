@@ -98,7 +98,7 @@ export default function DestinationPage() {
                 {/* Main Content */}
                 <main className='col-span-1 md:col-span-3'>
                     <div className='flex justify-between items-center mb-4'>
-                        <h2 className='text-lg md:text-xl font-bold text-gray-800'>50 best Tours in Xperience</h2>
+                        {/* <h2 className='text-lg md:text-xl font-bold text-gray-800'>50 best Tours in Xperience</h2> */}
                         <select className='border px-2 py-1'>
                             <option>Most Popular</option>
                             <option>Lowest Price</option>
