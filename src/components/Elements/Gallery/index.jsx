@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function Gallery({ images = [] ,width = "w-1/2",height = "h-[270px]"}) {
+export default function Gallery({ images = [] ,width = "w-1/2",height = "h-[300px]"}) {
     const [selectedImage, setSelectedImage] = useState(null);
 
     return (

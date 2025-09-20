@@ -90,7 +90,7 @@ export default function DestinationPage() {
                                                 {item.destination_image.length > 0 ? (
                                                     <img
                                                         loading='lazy'
-                                                        src={`http://127.0.0.1:8000/storage/${item.destination_image[0].image}`}
+                                                        src={`${item.destination_image[0].image}`}
                                                         alt={item.name}
                                                         className='w-full h-48 md:h-56 object-cover'
                                                     />
