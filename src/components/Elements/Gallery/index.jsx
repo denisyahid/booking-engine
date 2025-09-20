@@ -1,12 +1,12 @@
 import { useState } from 'react';
 
-export default function Gallery({ images = [] }) {
+export default function Gallery({ images = [] ,width = "w-1/2",height = "h-[300px]"}) {
     const [selectedImage, setSelectedImage] = useState(null);
 
     return (
-        <div className='w-full md:w-1/2'>
+        <div className={`w-full md:${width}`} >
             {/* Grid Gallery */}
-            <div className='grid grid-cols-2 sm:grid-cols-3 gap-2 h-[220px] sm:h-[270px] overflow-hidden'>
+            <div className={`grid grid-cols-2 sm:grid-cols-3 gap-2 ${height} sm:${height} overflow-hidden`}>
                 {images.slice(0, 5).map((img, i) => (
                     <div
                         key={i}

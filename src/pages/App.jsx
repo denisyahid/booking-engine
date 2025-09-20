@@ -45,6 +45,7 @@ const App = () => {
     const [roomFacilities, setRoomFacilities] = useState([]);
     const [roomRates, setRoomRates] = useState([]);
     const [hotel, setHotel] = useState({});
+    const [destinations,setDestinations] = useState([]);
     const [hotelImages, setHotelImages] = useState([]);
     const [range, setRange] = useState([
         {
@@ -117,6 +118,13 @@ const App = () => {
             setRoomRates(res.data);
         });
     }, []);
+
+    // Nearby
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/${slug}/nearby`).then((res) => {
+            setDestinations(res.data);
+        });
+    }, [slug]);
 
     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
@@ -194,7 +202,7 @@ const App = () => {
             <Advantage slug={slug}/>
             <ReviewCarousel slug={slug} />
             <Facilities slug={slug} />
-            <LocationSection hotel={hotel} slug={slug} />
+            <LocationSection hotel={hotel} slug={slug} destinations={destinations} />
             <Policies slug={slug} />
             <AboutSection description={hotel.description} title={hotel.name} />
             <FAQ slug={slug} />

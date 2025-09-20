@@ -1,0 +1,52 @@
+const GeneralInfo = ({ destination, formatRupiah }) => {
+    return (
+        destination.destination_rate && (
+            <div className='w-full max-w-6xl mx-auto py-6 flex '>
+                <div className='w-1/3 max-w-6xl mx-auto`'>
+                    {/* Judul */}
+                    <h2 className='text-xl font-semibold mb-4'>General Information</h2>
+
+                    {/* Isi Informasi */}
+                    <div className='space-y-3 text-sm sm:text-base'>
+                        <div className='flex flex-col sm:flex-row'>
+                            <span className='w-40 font-semibold'>Ticket Price</span>
+                            <span>{formatRupiah(destination.destination_rate?.price)}</span>
+                        </div>
+
+                        <div className='flex flex-col sm:flex-row'>
+                            <span className='w-40 font-semibold'>Opening Hours</span>
+                            <span>{destination.openingHours}10:00-18:00</span>
+                        </div>
+
+                        <div className='flex flex-col sm:flex-row'>
+                            <span className='w-40 font-semibold'>Address</span>
+                            <span>{destination.location}</span>
+                        </div>
+
+                        {/* <div className='flex flex-col sm:flex-row'>
+                    <span className='w-40 font-semibold'>Public Facilities</span>
+                    <span>{destination.facilities.join(', ')}</span>
+                </div> */}
+
+                        {/* <div className='flex flex-col sm:flex-row'>
+                        <span className='w-40 font-semibold'>Category</span>
+                        <span>{destination.category}</span>
+                    </div> */}
+                    </div>
+                </div>
+                <div className='w-2/3'>
+                    <h2 className='text-xl font-semibold mb-4'>Location</h2>
+
+                    <iframe
+                        title='map'
+                        src={`${destination.maps}`}
+                        className='w-full h-64 sm:h-80 lg:h-full shadow'
+                        allowFullScreen=''
+                        loading='lazy'></iframe>
+                </div>
+            </div>
+        )
+    );
+};
+
+export default GeneralInfo;
