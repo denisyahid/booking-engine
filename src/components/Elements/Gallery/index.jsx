@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
-export default function Gallery({ images = [] ,width = "w-1/2",height = "h-[300px]"}) {
+export default function Gallery({ images = [], width = 'w-1/2', height = 'h-[320px]' }) {
     const [selectedImage, setSelectedImage] = useState(null);
 
     return (
-        <div className={`w-full md:${width}`} >
+        <div className={`w-full md:${width}`}>
             {/* Grid Gallery */}
             <div className={`grid grid-cols-2 sm:grid-cols-3 gap-2 ${height} sm:${height} overflow-hidden`}>
                 {images.slice(0, 5).map((img, i) => (
@@ -25,9 +25,15 @@ export default function Gallery({ images = [] ,width = "w-1/2",height = "h-[300p
                 {/* More button jika gambar lebih dari 5 */}
                 {images.length > 5 && (
                     <div
-                        className='flex items-center justify-center bg-gray-800 text-white text-lg font-semibold cursor-pointer'
+                        className='relative flex items-center overflow-hidden justify-center bg-gray-800 text-white text-lg font-semibold cursor-pointer'
                         onClick={() => setSelectedImage(images[5])}>
-                        +{images.length - 5} More
+                        <img
+                            loading='lazy'
+                            src={images[5]}
+                            // alt={`Hotel ${i}`}
+                            className={`w-full h-full object-cover hover:scale-105 transition-transform duration-300 ${images.length > 5 && ("opacity-70")}`}
+                        />
+                        <span className='absolute'>+{images.length - 5} More </span>
                     </div>
                 )}
             </div>

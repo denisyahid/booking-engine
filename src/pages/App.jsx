@@ -44,8 +44,10 @@ const App = () => {
     const [roomImages, setRoomImages] = useState([]);
     const [roomFacilities, setRoomFacilities] = useState([]);
     const [roomRates, setRoomRates] = useState([]);
+    const [roomRateDates, setRoomRateDates] = useState([]);
+    const [discountRoom, setDiscountRoom] = useState([]);
     const [hotel, setHotel] = useState({});
-    const [destinations,setDestinations] = useState([]);
+    const [destinations, setDestinations] = useState([]);
     const [hotelImages, setHotelImages] = useState([]);
     const [range, setRange] = useState([
         {
@@ -119,12 +121,26 @@ const App = () => {
         });
     }, []);
 
+    useEffect(() => {
+        axios.get('http://127.0.0.1:8000/api/specialrate').then((res) => {
+            setRoomRateDates(res.data);
+        });
+    }, []);
+
+    // // Room Discount
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/latestroom/${slug}`).then((res) => {
+            setDiscountRoom(res.data);
+            console.log(res.data);
+        });
+    }, []);
+
     // Nearby
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/${slug}/nearby`).then((res) => {
             setDestinations(res.data);
         });
-    }, [slug]);
+    }, []);
 
     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
@@ -184,8 +200,8 @@ const App = () => {
                 handleDateChange={handleDateChange}
                 range={range}
             />
-            <BioHotel hotel={hotel} images={hotelImages}  />
-            {(!hasSearchParams || rooms) && <Hero roomsByHotel={rooms} rooms={rooms} roomImages={roomImages} />}
+            <BioHotel hotel={hotel} images={hotelImages} />
+            {(!hasSearchParams || rooms) && <Hero discount={roomRateDates} roomsByHotel={discountRoom} rooms={discountRoom} roomImages={roomImages} />}
             <RoomCard
                 checkIn={checkIn}
                 checkOut={checkOut}
@@ -199,7 +215,7 @@ const App = () => {
                 roomFacilities={roomFacilities}
                 roomRates={roomRates}
             />
-            <Advantage slug={slug}/>
+            <Advantage slug={slug} />
             <ReviewCarousel slug={slug} />
             <Facilities slug={slug} />
             <LocationSection hotel={hotel} slug={slug} destinations={destinations} />

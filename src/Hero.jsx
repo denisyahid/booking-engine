@@ -1,10 +1,10 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-export default function Hero({ roomsByHotel = [] ,rooms, roomImages}) {
+export default function Hero({ rooms, roomImages }) {
     const [currentIndex, setCurrentIndex] = useState(0);
-    
-    const allRooms = roomsByHotel.length > 0 ? roomsByHotel : rooms;
+
+    const allRooms = rooms.length > 0 ? rooms : [];
 
     // carousel auto geser tiap 5 detik
     useEffect(() => {
@@ -38,7 +38,7 @@ export default function Hero({ roomsByHotel = [] ,rooms, roomImages}) {
     };
 
     return (
-        (roomsByHotel.length > 0 || rooms.length > 0) && (
+        rooms.length > 0 && (
             <div className='md:py-5 bg-white'>
                 <section className='max-w-6xl mx-auto py-4 overflow-hidden relative'>
                     <h2 className='font-sans p-5 md:p-0 text-2xl md:text-3xl md:mb-8'>Latest Room Deals</h2>
@@ -52,24 +52,18 @@ export default function Hero({ roomsByHotel = [] ,rooms, roomImages}) {
                             {getVisibleRooms().map((room) => {
                                 const images = roomImages.filter((image) => image.room_id === room.id);
                                 return (
-                                    <article
-                                        key={room.id}
-                                        className='w-full md:w-1/3 flex-shrink-0 px-4'
-                                    >
+                                    <article key={room.id} className='w-full md:w-1/3 flex-shrink-0 px-4'>
                                         <div className='bg-white shadow overflow-hidden'>
                                             <div className='relative'>
                                                 {images.length > 0 ? (
-                                                    <img loading='lazy'
+                                                    <img
+                                                        loading='lazy'
                                                         src={images[0].image}
                                                         alt={room.name}
                                                         className='w-full h-48 md:h-56 object-cover'
                                                     />
                                                 ) : (
-                                                    <img loading='lazy'
-                                                        src='test'
-                                                        alt='no image'
-                                                        className='w-full h-48 md:h-56 object-cover'
-                                                    />
+                                                    <img loading='lazy' src='test' alt='no image' className='w-full h-48 md:h-56 object-cover' />
                                                 )}
                                             </div>
 
@@ -86,19 +80,21 @@ export default function Hero({ roomsByHotel = [] ,rooms, roomImages}) {
                             })}
                         </div>
 
-                        {/* tombol prev */}
-                        <button
-                            onClick={handlePrev}
-                            className='absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-r-md hover:bg-black/70'>
-                            ‹
-                        </button>
+                        {getVisibleRooms.length > 3 && (
+                            <div>
+                                <button
+                                    onClick={handlePrev}
+                                    className='absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-r-md hover:bg-black/70'>
+                                    ‹
+                                </button>
 
-                        {/* tombol next */}
-                        <button
-                            onClick={handleNext}
-                            className='absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-l-md hover:bg-black/70'>
-                            ›
-                        </button>
+                                <button
+                                    onClick={handleNext}
+                                    className='absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-l-md hover:bg-black/70'>
+                                    ›
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </section>
             </div>

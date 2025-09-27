@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { FcGoogle } from 'react-icons/fc';
@@ -6,10 +6,10 @@ import { FaUserCircle } from 'react-icons/fa';
 import Carousel from '../../Elements/Carousel';
 
 export default function BookingForm() {
+    const [room,setRoom] = useState({});
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
-    const [roomImage,setRoomImage] = useState([]);
-    const [carouselImages, setCarouselImages] = useState([]);
+    const [roomImage, setRoomImage] = useState([]);
     const [rates, setRates] = useState({});
     const [facility, setFacility] = useState([]);
     const [loading, setLoading] = useState(false);
@@ -20,22 +20,55 @@ export default function BookingForm() {
         children: 0,
         roomQuantity: 1,
     });
+    const [showInvoice, setShowInvoice] = useState(false);
+    const [invoiceData, setInvoiceData] = useState(null);
     const { id } = useParams();
     const location = useLocation();
     const bookingUrl = location.state || {};
 
-    const handleSubmit = (e) => {
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/room/${id}`)
+        .then((res) => {
+            setRoom(res.data)
+        })
+    },[])
+
+    // const handleSubmit = (e) => {
+    //     e.preventDefault();
+    //     axios
+    //         .post('http://127.0.0.1:8000/api/post/booking', {
+    //             room_id: room.id,
+    //             title: e.target.title.value,
+    //             fullname: e.target.fullname.value,
+    //             email: e.target.email.value,
+    //             mobile_number: e.target.mobileNumber.value,
+    //             special_request: e.target.specialRequest.value,
+    //         })
+    //         .catch((err) => console.error(err));
+    // };
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axios
-            .post('http://127.0.0.1:8000/api/post/booking', {
+        console.log(e.target.checkIn.value)
+        try {
+            const res = await axios.post('http://127.0.0.1:8000/api/post/booking', {
                 room_id: room.id,
                 title: e.target.title.value,
                 fullname: e.target.fullname.value,
                 email: e.target.email.value,
                 mobile_number: e.target.mobileNumber.value,
                 special_request: e.target.specialRequest.value,
-            })
-            .catch((err) => console.error(err));
+                checkIn: e.target.checkIn.value,
+                checkOut: e.target.checkOut.value,
+                total: rates.rate * bookingData.roomQuantity
+            });
+            console.log(res.data)
+            setInvoiceData(res.data.booking); // simpan data invoice
+            setShowInvoice(true); // tampilkan popup
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     const handleLogin = async (credentialResponse) => {
@@ -117,12 +150,6 @@ export default function BookingForm() {
         return dayName;
     }
 
-    // useEffect(() => {
-    //     axios.get(`http://127.0.0.1:8000/api/${id}/`).then((res) => {
-    //         setCarouselImages(res.data);
-    //     });
-    // }, []);
-
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/${id}/room/image`).then((res) => {
             setRoomImage(res.data);
@@ -138,7 +165,7 @@ export default function BookingForm() {
             checkOut: bookingUrl.checkOut,
             adult: bookingUrl.adult,
             children: bookingUrl.children,
-            roomQuantity: bookingUrl.roomQuantity
+            roomQuantity: bookingUrl.roomQuantity,
         });
 
         setCheckIn(bookingUrl.checkIn);
@@ -186,7 +213,7 @@ export default function BookingForm() {
                 </div>
 
                 {/* Content */}
-                <form onSubmit={handlePayment} className='grid md:grid-cols-3 gap-6 px-6'>
+                <form onSubmit={handleSubmit} className='grid md:grid-cols-3 gap-6 px-6'>
                     <input type='hidden' name='total' value={rates.rate} />
                     {/* Left Content */}
                     <div className='md:col-span-2 space-y-6'>
@@ -199,15 +226,15 @@ export default function BookingForm() {
                                     <option>Mrs.</option>
                                     <option>Ms.</option>
                                 </select>
-                                <input name='fullname' type='text' placeholder='Full Name' className='border p-2' />
-                                <input name='email' type='email' placeholder='Email Address' className='border p-2 col-span-2' />
-                                <div className='flex col-span-2 gap-2'>
+                                <input required name='fullname' type='text' placeholder='Full Name' className='border p-2' />
+                                <input required name='email' type='email' placeholder='Email Address' className='border p-2 col-span-2' />
+                                <div required className='flex col-span-2 gap-2'>
                                     <select className='border p-2 w-28'>
                                         <option>+62</option>
                                         <option>+60</option>
                                         <option>+65</option>
                                     </select>
-                                    <input name='mobileNumber' type='tel' placeholder='Mobile Number' className='border p-2 flex-1' />
+                                    <input required name='mobileNumber' type='tel' placeholder='Mobile Number' className='border p-2 flex-1' />
                                 </div>
                             </div>
 
@@ -224,7 +251,7 @@ export default function BookingForm() {
                                     </label>
                                     <input
                                         onChange={handleCheckOut}
-                                        value={checkOut}
+                                        value={bookingData.checkOut}
                                         type='date'
                                         name='checkOut'
                                         id='checkOut'
@@ -266,10 +293,10 @@ export default function BookingForm() {
                             <h2 className='font-semibold text-lg'>Accommodation Policies</h2>
                             <div className='flex justify-between text-sm text-gray-700 mt-2'>
                                 <p>
-                                    Check-In: <span className='font-medium'>{checkIn}</span>
+                                    Check-In: <span className='font-medium'>{bookingData.checkIn}</span>
                                 </p>
                                 <p>
-                                    Check-Out: <span className='font-medium'>{checkOut}</span>
+                                    Check-Out: <span className='font-medium'>{bookingData.checkOut}</span>
                                 </p>
                             </div>
                         </div>
@@ -285,9 +312,9 @@ export default function BookingForm() {
                             <div className='p-4 space-y-2'>
                                 <h3 className='font-semibold'>{rates.room.name}</h3>
                                 <p className='text-sm text-gray-600'>
-                                    {getDayName(checkIn)} {checkIn}
+                                    {getDayName(bookingData.checkIn)} {bookingData.checkIn}
                                     <span className='mx-1'>/</span>
-                                    {getDayName(checkOut)} {checkOut} <br />1 Night • {bookingData.roomQuantity} Room • {rates.room.capacity} Guest
+                                    {getDayName(bookingData.checkOut)} {bookingData.checkOut} <br />1 Night • {bookingData.roomQuantity} Room • {rates.room.capacity} Guest
                                 </p>
                                 <p className='text-right font-bold text-primary'>{formatRupiah(rates.rate * bookingData.roomQuantity)}</p>
                             </div>
@@ -315,6 +342,44 @@ export default function BookingForm() {
                     </div>
                 </form>
             </div>
+            {showInvoice && invoiceData && (
+                <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50'>
+                    <div className='bg-white rounded-lg shadow-lg p-6 w-[500px] relative'>
+                        <button className='absolute top-2 right-2 text-gray-600 hover:text-red-500' onClick={() => setShowInvoice(false)}>
+                            ✕
+                        </button>
+
+                        <h2 className='text-2xl font-bold text-center mb-4'>Invoice</h2>
+                        <p>
+                            <strong>Invoice Number:</strong> {invoiceData.invoice_number}
+                        </p>
+                        <p>
+                            <strong>Nama:</strong> {invoiceData.fullname}
+                        </p>
+                        <p>
+                            <strong>Email:</strong> {invoiceData.email}
+                        </p>
+                        <p>
+                            <strong>Check In:</strong> {invoiceData.check_in}
+                        </p>
+                        <p>
+                            <strong>Check Out:</strong> {invoiceData.check_out}
+                        </p>
+                        <p>
+                            <strong>Special Request:</strong> {invoiceData.special_request || '-'}
+                        </p>
+                        <p>
+                            <strong>Total:</strong> IDR {Number(invoiceData.total).toLocaleString()}
+                        </p>
+
+                        <div className='text-center mt-4'>
+                            <button className='bg-primary text-white px-4 py-2 rounded hover:bg-blue-600' onClick={() => setShowInvoice(false)}>
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

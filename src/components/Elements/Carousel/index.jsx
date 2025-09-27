@@ -42,7 +42,7 @@ const Carousel = ({ images = [], name ,height = 80}) => {
                             key={idx}
                             src={
                                 img.image
-                                    ? `/${img.image}`
+                                    ? `${img.image}`
                                     : 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop'
                             }
                             alt={`${name}-${idx}`}

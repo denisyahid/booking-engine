@@ -15,8 +15,12 @@ import {
     FaCar,
     FaBan,
     FaBicycle,
-    // FaBycycle,
+    FaParking,
+    FaPagelines,
+    FaWater,
+    FaChair,
 } from 'react-icons/fa';
+import { IoIosWater } from "react-icons/io";
 
 export default function Facilities({slug}) {
     const [showAll, setShowAll] = useState(false);
@@ -39,6 +43,11 @@ export default function Facilities({slug}) {
         FaDoorOpen: <FaDoorOpen />,
         FaCar: <FaCar />,
         FaBan: <FaBan />,
+        FaParking: <FaParking />,
+        FaPagelines: <FaPagelines />,
+        FaWater: <FaWater/>,
+        FaChair: <FaChair />,
+        IoIosWater: <IoIosWater />
     };
 
     useEffect(() => {

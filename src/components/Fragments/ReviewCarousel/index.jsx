@@ -33,10 +33,15 @@ export default function ReviewCarousel({ slug }) {
     }
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/review`).then((res) => {
-            setReviews(res.data.hotel_review);
-        });
-    }, []);
+        axios
+            .get(`http://127.0.0.1:8000/api/${slug}/review`)
+            .then((res) => {
+                setReviews(res.data?.hotel_review ?? []);
+            })
+            .catch(() => setReviews([]));
+    }, [slug]);
+
+    if (!Array.isArray(reviews)) return <ErrorElement />;
 
     const nextSlide = () => {
         setCurrent((prev) => (prev + itemsPerSlide >= reviews.length ? 0 : prev + itemsPerSlide));

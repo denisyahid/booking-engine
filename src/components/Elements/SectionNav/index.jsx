@@ -5,32 +5,38 @@ const SectionNav = ({ onShare }) => {
     const sections = [
         { id: 'overview', label: 'Overview' },
         { id: 'tickets', label: 'Ticket Options' },
-        { id: 'about', label: 'About This Product' },
+        { id: 'about', label: 'General Information' },
         { id: 'reviews', label: 'Reviews' },
         { id: 'faqs', label: 'FAQs' },
     ];
 
     const [active, setActive] = useState('overview');
 
-    useEffect(() => {
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        setActive(entry.target.id);
-                    }
-                });
-            },
-            { threshold: 0.5 },
-        );
+   useEffect(() => {
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    setActive(entry.target.id);
+                }
+            });
+        },
+        {
+            root: null,
+            rootMargin: "0px",
+            threshold: 0.5, // cukup 30% kelihatan, langsung dianggap aktif
+        }
+    );
 
-        sections.forEach((s) => {
-            const el = document.getElementById(s.id);
-            if (el) observer.observe(el);
-        });
+    sections.forEach((s) => {
+        const el = document.getElementById(s.id);
+        if (el) observer.observe(el);
+    });
 
-        return () => observer.disconnect();
-    }, []);
+    return () => observer.disconnect();
+}, []);
+
+
 
     const handleClick = (id) => {
         const el = document.getElementById(id);
@@ -40,8 +46,8 @@ const SectionNav = ({ onShare }) => {
     };
 
     return (
-        <div className='sticky top-0 z-40 bg-white shadow-sm'>
-            <div className='max-w-6xl mx-auto flex items-center justify-between px-4 overflow-x-auto'>
+        <div className='fixed bottom-0 left-1/2 -translate-x-1/2 w-max max-w-6xl mb-5 z-50 bg-white shadow-md'>
+            <div className='flex items-center justify-between px-4 overflow-x-auto'>
                 <div className='flex space-x-4 md:space-x-6'>
                     {sections.map((s) => (
                         <button

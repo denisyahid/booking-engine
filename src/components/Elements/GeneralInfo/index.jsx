@@ -1,7 +1,7 @@
 const GeneralInfo = ({ destination, formatRupiah }) => {
     return (
         destination.destination_rate && (
-            <div className='w-full max-w-6xl mx-auto py-6 flex '>
+            <div id="about" className='w-full max-w-6xl mx-auto py-6 flex my-10'>
                 <div className='w-1/3 max-w-6xl mx-auto`'>
                     {/* Judul */}
                     <h2 className='text-xl font-semibold mb-4'>General Information</h2>
@@ -15,7 +15,7 @@ const GeneralInfo = ({ destination, formatRupiah }) => {
 
                         <div className='flex flex-col sm:flex-row'>
                             <span className='w-40 font-semibold'>Opening Hours</span>
-                            <span>{destination.openingHours}10:00-18:00</span>
+                            <span>{destination.open_hours}</span>
                         </div>
 
                         <div className='flex flex-col sm:flex-row'>

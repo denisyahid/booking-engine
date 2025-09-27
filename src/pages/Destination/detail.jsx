@@ -8,6 +8,9 @@ import ExperiencesSection from '../../components/Fragments/ExperiencesSection';
 import GuestPhotos from '../../components/Fragments/GuestPhotos';
 import GeneralInfo from '../../components/Elements/GeneralInfo';
 import SectionNav from '../../components/Elements/SectionNav';
+import FAQ from '../../components/Fragments/FAQ';
+import DestinationFaq from '../../components/Elements/DestinationFaq';
+import Footer from '../../components/Fragments/Footer';
 
 const DestinationDetail = () => {
     const { slug } = useParams();
@@ -16,10 +19,13 @@ const DestinationDetail = () => {
     const [destinationReviews, setDestinationReviews] = useState([]);
     const [nearbyDestinations, setNearbyDestinations] = useState([]);
     const [guestPhotos, setGuestPhotos] = useState([]);
+    const [destinationFacilities,setDestinationFacilities] = useState([]);
+    const [destinationFaqs,setDestinationFaqs] = useState([]);
 
     useEffect(() => {
         axios.get(`http://127.0.0.1:8000/api/destination/${slug}`).then((res) => {
             setDestination(res.data);
+            console.log(res.data)
         });
     }, []);
 
@@ -48,6 +54,20 @@ const DestinationDetail = () => {
         });
     }, []);
 
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/destination/facility/${slug}`)
+        .then((res) => {
+            setDestinationFacilities(res.data)
+        })
+    },[])
+
+    useEffect(() => {
+        axios.get(`http://127.0.0.1:8000/api/destination/faq/${slug}`)
+        .then((res) => {
+            setDestinationFaqs(res.data)
+        })
+    },[])
+
     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
     const handleShare = async () => {
@@ -75,30 +95,17 @@ const DestinationDetail = () => {
     };
 
     return (
-        <>
+        <div className='h-max'>
             <DestinationNavbar />
             <DestinationInfo destination={destination} destinationImages={destinationImages} />
             <SectionNav onShare={handleShare} />
-            <DestinationDescription formatRupiah={formatRupiah} destination={destination} reviews={destinationReviews} />
+            <DestinationDescription handleShare={handleShare} formatRupiah={formatRupiah} destination={destination} reviews={destinationReviews} facilities={destinationFacilities} />
             <GuestPhotos guestPhotos={guestPhotos} />
             <GeneralInfo destination={destination} formatRupiah={formatRupiah} />
             <ExperiencesSection destinations={nearbyDestinations} />
-            <div id='overview' className='h-[600px] p-6 bg-gray-50'>
-                Overview content...
-            </div>
-            <div id='tickets' className='h-[600px] p-6'>
-                Ticket Options content...
-            </div>
-            <div id='about' className='h-[600px] p-6 bg-gray-50'>
-                About content...
-            </div>
-            <div id='reviews' className='h-[600px] p-6'>
-                Reviews content...
-            </div>
-            <div id='faqs' className='h-[600px] p-6 bg-gray-50'>
-                FAQs content...
-            </div>
-        </>
+            <DestinationFaq faq={destinationFaqs} />
+            <Footer hotel={destination} />
+        </div>
     );
 };
 

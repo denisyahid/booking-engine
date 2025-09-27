@@ -11,7 +11,7 @@ export default function BioHotel({hotel,images}) {
 
     return (
         <div className='max-w-6xl mx-auto gap-5 flex flex-wrap md:flex-nowrap items-center md:py-10'>
-            <div className='w-full md:w-1/2 mx-5 md:mx-auto rounded bg-white p-6 border shadow-lg my-10'>
+            <div className='w-full md:w-1/2 mx-5 md:mx-auto rounded bg-white p-6 py-10 border shadow-lg my-10'>
                 {/* <h2 className='text-2xl font-bold'>{hotel.name}</h2> */}
                 <div className='flex items-center gap-2 text-gray-600 mt-1'>
                     <FaMapMarkerAlt className='text-primary' />

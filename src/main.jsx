@@ -11,10 +11,10 @@ import DestinationPage from './pages/Destination/index.jsx';
 import DestinationDetail from './pages/Destination/detail.jsx';
 
 const router = createBrowserRouter([
-    {
-        path: '/',
-        element: <App />,
-    },
+    // {
+    //     path: '/',
+    //     element: <App />,
+    // },
     {
         path: '/:slug',
         element: <App />,

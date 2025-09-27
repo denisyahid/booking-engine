@@ -4,26 +4,16 @@ import { useParams } from 'react-router-dom';
 import { Play } from 'lucide-react'; // ikon play
 
 // 🔹 Komponen video card terpisah
-function VideoCard({ videoSrc,slug }) {
+function VideoCard({ videoSrc,slug,image }) {
     const videoRef = useRef(null);
     const [isPlaying, setIsPlaying] = useState(false);
 
-    // const handlePlay = () => {
-    //     if (videoRef.current) {
-    //         videoRef.current.play();
-    //         setIsPlaying(true);
-    //     }
-    // };
-
     return (
         <div className='relative w-full aspect-square bg-gray-200 overflow-hidden shadow-sm'>
-            {/* <img className='w-full h-full object-cover' src="/images/room1.jpg" alt="" /> */}
+            <img className='w-full h-full object-cover' src={image} alt="" />
             <video ref={videoRef} className='w-full h-full object-cover' src={videoSrc} controls={false} />
             {!isPlaying && (
                 <a href={`/destination/${slug}`} className='absolute inset-0 flex items-center justify-center'>
-                    <span className='flex items-center justify-center w-12 h-12 rounded-full bg-primary shadow-lg hover:bg-primary/80 transition'>
-                        <Play className='w-6 h-6 text-white' />
-                    </span>
                 </a>
             )}
         </div>
@@ -32,14 +22,7 @@ function VideoCard({ videoSrc,slug }) {
 
 export default function ExperiencesSection({ destinations = [] }) {
     const [visibleCount] = useState(6);
-    // const [destination, setDestination] = useState([]);
     const { slug } = useParams();
-
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/nearby`).then((res) => {
-            setDestination(res.data);
-        });
-    }, [slug]);
 
     return (
         <section className='w-full max-w-6xl mx-auto py-8'>
@@ -57,7 +40,7 @@ export default function ExperiencesSection({ destinations = [] }) {
                     destinations
                         .filter((nearby) => nearby.is_nearby == false)
                         .slice(0, visibleCount)
-                        .map((item, idx) => <VideoCard slug={item.slug} key={idx} videoSrc={item.video} />)}
+                        .map((item, idx) => <VideoCard slug={item.slug} key={idx} videoSrc={item.video} image={item.destination_image[0].image} />)}
             </div>
         </section>
     );
