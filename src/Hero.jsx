@@ -1,103 +1,195 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 
 export default function Hero({ rooms, roomImages }) {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [isTransitioning, setIsTransitioning] = useState(false);
 
     const allRooms = rooms.length > 0 ? rooms : [];
 
-    // carousel auto geser tiap 5 detik
+    // Carousel auto-slide every 5 seconds
     useEffect(() => {
         if (allRooms.length > 3) {
             const interval = setInterval(() => {
                 handleNext();
-            }, 3000);
-
+            }, 5000);
             return () => clearInterval(interval);
         }
-    }, [allRooms]);
+    }, [allRooms, currentIndex]);
 
-    // fungsi ambil 3 room mulai dari currentIndex
-    const getVisibleRooms = () => {
-        // Jika data room kurang dari atau sama dengan 3, tampilkan semua
-        if (allRooms.length <= 3) return allRooms;
-        let visible = [];
-        for (let i = 0; i < 3; i++) {
-            visible.push(allRooms[(currentIndex + i) % allRooms.length]);
-        }
-        return visible;
-    };
-
-    // tombol next & prev
     const handleNext = () => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % allRooms.length);
+        if (isTransitioning || allRooms.length <= 3) return;
+        setIsTransitioning(true);
+        if (currentIndex + 3 >= allRooms.length) {
+            setCurrentIndex(0);
+        } else {
+            setCurrentIndex((prev) => prev + 1);
+        }
+        setTimeout(() => setIsTransitioning(false), 600);
     };
 
     const handlePrev = () => {
-        setCurrentIndex((prevIndex) => (prevIndex - 1 + allRooms.length) % allRooms.length);
+        if (isTransitioning || allRooms.length <= 3) return;
+        setIsTransitioning(true);
+        if (currentIndex === 0) {
+            setCurrentIndex(Math.max(0, allRooms.length - 3));
+        } else {
+            setCurrentIndex((prev) => prev - 1);
+        }
+        setTimeout(() => setIsTransitioning(false), 600);
     };
 
-    return (
-        rooms.length > 0 && (
-            <div className='md:py-5 bg-white'>
-                <section className='max-w-6xl mx-auto py-4 overflow-hidden relative'>
-                    <h2 className='font-sans p-5 md:p-0 text-2xl md:text-3xl md:mb-8'>Latest Room Deals</h2>
+    // Get room image
+    const getRoomImage = (room) => {
+        let images = room.images || [];
+        if (images.length === 0 && roomImages) {
+            images = roomImages.filter((image) => image.room_id === room.id);
+        }
+        if (images.length > 0) {
+            return images[0].url || images[0].image;
+        }
+        return room.cover_image || 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?q=80&w=870&auto=format&fit=crop';
+    };
 
-                    <div className='relative w-full'>
+    const formatRupiah = (num) => {
+        return 'Rp ' + Number(num).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    };
+
+    if (rooms.length === 0) return null;
+
+    return (
+        <div className='bg-gradient-to-b from-blue-50 via-white to-blue-50 py-12'>
+            <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
+                {/* Header Section */}
+                <div className='text-center mb-8'>
+                    <h2 className='font-sans text-2xl md:text-3xl font-semibold text-gray-800'>
+                        Latest Room Deals
+                    </h2>
+                </div>
+
+                {/* Carousel Container */}
+                <div className='relative'>
+                    {/* Navigation Arrows */}
+                    {allRooms.length > 3 && (
+                        <>
+                            <button
+                                onClick={handlePrev}
+                                disabled={isTransitioning}
+                                className='absolute left-0 top-1/2 -translate-y-1/2 z-20 -translate-x-4
+                                           bg-white/90 hover:bg-white text-gray-700 p-3 shadow-lg
+                                           border border-gray-200 transition-all duration-300
+                                           disabled:opacity-50 disabled:cursor-not-allowed'>
+                                <FaChevronLeft size={18} />
+                            </button>
+                            <button
+                                onClick={handleNext}
+                                disabled={isTransitioning}
+                                className='absolute right-0 top-1/2 -translate-y-1/2 z-20 translate-x-4
+                                           bg-white/90 hover:bg-white text-gray-700 p-3 shadow-lg
+                                           border border-gray-200 transition-all duration-300
+                                           disabled:opacity-50 disabled:cursor-not-allowed'>
+                                <FaChevronRight size={18} />
+                            </button>
+                        </>
+                    )}
+
+                    {/* Cards Grid with Smooth Slide Transition */}
+                    <div className='overflow-hidden'>
                         <div
-                            className='flex transition-transform duration-700 ease-in-out'
+                            className='flex transition-transform duration-600 ease-in-out'
                             style={{
-                                transform: `translateX(-${0}%)`,
-                            }}>
-                            {getVisibleRooms().map((room) => {
-                                const images = roomImages.filter((image) => image.room_id === room.id);
+                                transform: `translateX(-${currentIndex * (100 / 3)}%)`,
+                                width: `${(allRooms.length / 3) * 100}%`,
+                            }}
+                        >
+                            {allRooms.map((room) => {
+                                const originalPrice = room.original_rate || room.rate || 0;
+                                const discountPrice = room.rate || 0;
+                                const hasDiscount = room.has_discount && originalPrice > discountPrice;
+                                const discountPercent = room.discount_percent || 0;
+
                                 return (
-                                    <article key={room.id} className='w-full md:w-1/3 flex-shrink-0 px-4'>
-                                        <div className='bg-white shadow overflow-hidden'>
-                                            <div className='relative'>
-                                                {images.length > 0 ? (
-                                                    <img
-                                                        loading='lazy'
-                                                        src={images[0].image}
-                                                        alt={room.name}
-                                                        className='w-full h-48 md:h-56 object-cover'
-                                                    />
-                                                ) : (
-                                                    <img loading='lazy' src='test' alt='no image' className='w-full h-48 md:h-56 object-cover' />
+                                    <div
+                                        key={room.id}
+                                        className='px-3'
+                                        style={{ width: `${100 / allRooms.length}%` }}
+                                    >
+                                        <article
+                                            className='group bg-white rounded-lg border border-gray-200 hover:border-blue-400
+                                                       transition-all duration-300 hover:shadow-lg cursor-pointer h-full'>
+                                            {/* Image Section */}
+                                            <div className='relative h-56 overflow-hidden rounded-t-lg'>
+                                                <img
+                                                    loading='lazy'
+                                                    src={getRoomImage(room)}
+                                                    alt={room.name || 'Room'}
+                                                    className='w-full h-full object-cover group-hover:scale-105 transition-transform duration-500'
+                                                />
+
+                                                {/* Discount Badge */}
+                                                {hasDiscount && (
+                                                    <div className='absolute top-3 left-3'>
+                                                        <div className='bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1.5 text-xs font-semibold uppercase tracking-wide'>
+                                                            🔥 {Math.round(discountPercent)}% OFF
+                                                        </div>
+                                                    </div>
                                                 )}
                                             </div>
 
-                                            <div className='pt-4 p-4'>
-                                                <h3 className='font-sans text-lg mb-2'>{room.name}</h3>
-                                                <p className='text-sm text-gray-600 mb-4'>
-                                                    {room.description ? room.description.substring(0, 100) + '...' : 'No description available'}
-                                                </p>
-                                                <hr className='border-t border-gray-200' />
+                                            {/* Content Section */}
+                                            <div className='p-5'>
+                                                {/* Room Name */}
+                                                <h3 className='text-lg font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors'>
+                                                    {room.name}
+                                                </h3>
+
+                                                {/* Description */}
+                                                {room.description && (
+                                                    <p className='text-sm text-gray-600 mb-4 line-clamp-2 leading-relaxed'>
+                                                        {room.description}
+                                                    </p>
+                                                )}
+
+                                                {/* Price & CTA */}
+                                                <div className='pt-4 border-t border-gray-100'>
+                                                    <div className='flex items-end justify-between'>
+                                                        <div>
+                                                            <p className='text-xs text-gray-500 mb-1 uppercase'>Mulai dari</p>
+                                                            {hasDiscount ? (
+                                                                <div className='flex items-center gap-2'>
+                                                                    <p className='text-base text-gray-400 line-through'>
+                                                                        {formatRupiah(originalPrice)}
+                                                                    </p>
+                                                                    <p className='text-xl font-bold text-red-600'>
+                                                                        {formatRupiah(discountPrice)}
+                                                                    </p>
+                                                                    <span className='text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded font-semibold'>
+                                                                        -{Math.round(discountPercent)}%
+                                                                    </span>
+                                                                </div>
+                                                            ) : (
+                                                                <p className='text-xl font-bold text-blue-600'>
+                                                                    {formatRupiah(discountPrice)}
+                                                                </p>
+                                                            )}
+                                                            <p className='text-xs text-gray-500'>/malam</p>
+                                                        </div>
+
+                                                        <div className='bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 font-semibold text-sm uppercase tracking-wide transition-colors duration-200'>
+                                                            Detail
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </article>
+                                        </article>
+                                    </div>
                                 );
                             })}
                         </div>
-
-                        {getVisibleRooms.length > 3 && (
-                            <div>
-                                <button
-                                    onClick={handlePrev}
-                                    className='absolute left-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-r-md hover:bg-black/70'>
-                                    ‹
-                                </button>
-
-                                <button
-                                    onClick={handleNext}
-                                    className='absolute right-0 top-1/2 -translate-y-1/2 bg-black/50 text-white px-3 py-2 rounded-l-md hover:bg-black/70'>
-                                    ›
-                                </button>
-                            </div>
-                        )}
                     </div>
-                </section>
+
+                </div>
             </div>
-        )
+        </div>
     );
 }

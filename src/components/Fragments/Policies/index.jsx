@@ -1,14 +1,18 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import ErrorElement from '../../Elements/ErrorElement';
+import { contentAPI } from '../../../services/api';
 
 export default function Policies({slug}) {
     const [policies, setPolicies] = useState([]);
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/policies`).then((res) => {
-            setPolicies(res.data.policies);
-        });
+        contentAPI.policies(slug)
+            .then((res) => {
+                setPolicies(res.data.policies);
+            })
+            .catch(() => {
+                setPolicies([]);
+            });
     }, [slug]);
 
     if (!policies) return <ErrorElement />;

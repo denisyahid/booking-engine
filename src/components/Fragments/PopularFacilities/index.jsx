@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { facilityAPI } from '../../../services/api';
 import {
     FaSwimmingPool,
     FaWifi,
@@ -51,16 +51,24 @@ export default function Facilities({slug}) {
     };
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/facilities`).then((res) => {
-            setFacilities(res.data.hotel_facilities);
-        });
-    }, []);
+        facilityAPI.hotelFacilities(slug)
+            .then((res) => {
+                setFacilities(res.data.hotel_facilities);
+            })
+            .catch(() => {
+                setFacilities([]);
+            });
+    }, [slug]);
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/facilities/categories`).then((res) => {
-            setFacilityCategories(res.data);
-        });
-    }, []);
+        facilityAPI.facilityCategories(slug)
+            .then((res) => {
+                setFacilityCategories(res.data);
+            })
+            .catch(() => {
+                setFacilityCategories([]);
+            });
+    }, [slug]);
 
     return (
         <div className='max-w-6xl mx-auto bg-white p-6 shadow my-6 md:my-10 md:py-10'>

@@ -1,16 +1,20 @@
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import ErrorElement from '../../Elements/ErrorElement/index';
+import { contentAPI } from '../../../services/api';
 
 const Advantage = ({slug}) => {
     const [advantages, setAdvantages] = useState([]);
 
     useEffect(() => {
         // contoh fetch dari API
-        axios.get(`http://127.0.0.1:8000/api/advantage/${slug}`).then((res) => {
-            setAdvantages(res.data.advantage);
-        });
-    }, []);
+        contentAPI.advantages(slug)
+            .then((res) => {
+                setAdvantages(res.data.advantage);
+            })
+            .catch(() => {
+                setAdvantages([]);
+            });
+    }, [slug]);
 
     if (!advantages) return <ErrorElement />;
 

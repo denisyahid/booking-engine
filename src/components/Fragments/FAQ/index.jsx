@@ -1,16 +1,20 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { contentAPI } from '../../../services/api';
 
 export default function FAQ({slug}) {
     const [openIndex, setOpenIndex] = useState(null);
     const [faqs, setFaqs] = useState([]);
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/faq`).then((res) => {
-            setFaqs(res.data.faqs);
-        });
-    }, []);
+        contentAPI.faq(slug)
+            .then((res) => {
+                setFaqs(res.data.faqs);
+            })
+            .catch(() => {
+                setFaqs([]);
+            });
+    }, [slug]);
 
     const toggleFAQ = (index) => {
         setOpenIndex(openIndex === index ? null : index);

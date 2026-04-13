@@ -1,12 +1,18 @@
+'use client';
+
 import { use, useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import axios from 'axios';
-import { FcGoogle } from 'react-icons/fc';
+import { useSearchParams, useParams } from 'next/navigation';
+import { FcGoogle } from 'react-icons/fa';
 import { FaUserCircle } from 'react-icons/fa';
+import Link from 'next/link';
 import Carousel from '../../Elements/Carousel';
+import { roomAPI, facilityAPI, bookingAPI, paymentAPI } from '../../../services/api';
 
 export default function BookingForm() {
-    const [room,setRoom] = useState({});
+    const params = useParams();
+    const searchParams = useSearchParams();
+    const id = params.id;
+    const [room, setRoom] = useState({});
     const [checkIn, setCheckIn] = useState('');
     const [checkOut, setCheckOut] = useState('');
     const [roomImage, setRoomImage] = useState([]);
@@ -22,17 +28,25 @@ export default function BookingForm() {
     });
     const [showInvoice, setShowInvoice] = useState(false);
     const [invoiceData, setInvoiceData] = useState(null);
-    const { id } = useParams();
-    const location = useLocation();
-    const bookingUrl = location.state || {};
+
+    // Note: In Next.js, we can't access location.state from React Router
+    // We'll use searchParams instead
+    const bookingUrl = {
+        checkIn: searchParams.get('checkIn') || '',
+        checkOut: searchParams.get('checkOut') || '',
+        adult: searchParams.get('adult') || 0,
+        children: searchParams.get('children') || 0,
+        roomQuantity: searchParams.get('roomQuantity') || 1,
+    };
 
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/room/${id}`)
-        .then((res) => {
-            setRoom(res.data)
-        })
-    },[])
+        roomAPI.byId(id)
+            .then((res) => {
+                setRoom(res.data);
+            })
+            .catch(() => {});
+    }, [id]);
 
     // const handleSubmit = (e) => {
     //     e.preventDefault();
@@ -52,7 +66,7 @@ export default function BookingForm() {
         e.preventDefault();
         console.log(e.target.checkIn.value)
         try {
-            const res = await axios.post('http://127.0.0.1:8000/api/post/booking', {
+            const res = await bookingAPI.createLegacy({
                 room_id: room.id,
                 title: e.target.title.value,
                 fullname: e.target.fullname.value,
@@ -97,7 +111,7 @@ export default function BookingForm() {
         const form = e.target;
 
         try {
-            const res = await axios.post('http://127.0.0.1:8000/api/payment', {
+            const res = await paymentAPI.createLegacy({
                 gross_amount: rates.rate,
                 fullname: form.fullname.value,
                 email: form.email.value,
@@ -151,15 +165,15 @@ export default function BookingForm() {
     }
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${id}/room/image`).then((res) => {
-            setRoomImage(res.data);
-        });
-    }, []);
+        roomAPI.imagesById(id)
+            .then((res) => {
+                setRoomImage(res.data);
+            })
+            .catch(() => {});
+    }, [id]);
 
     useEffect(() => {
-        const params = new URLSearchParams(location.search);
-
-        // Memperbarui state dengan nilai dari URL
+        // Update booking data with URL search params
         setBookingData({
             checkIn: bookingUrl.checkIn,
             checkOut: bookingUrl.checkOut,
@@ -170,24 +184,27 @@ export default function BookingForm() {
 
         setCheckIn(bookingUrl.checkIn);
         setCheckOut(bookingUrl.checkOut);
-    }, [location.search]);
-
-    useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/room/${id}`).then((res) => {
-            setRates(res.data);
-            setLoading(true);
-        });
     }, []);
 
     useEffect(() => {
-        axios
-            .get(`http://127.0.0.1:8000/api/facilities/${id}`)
+        roomAPI.byId(id)
+            .then((res) => {
+                setRates(res.data);
+                setLoading(true);
+            })
+            .catch(() => {
+                setLoading(false);
+            });
+    }, [id]);
+
+    useEffect(() => {
+        facilityAPI.roomFacilities(id)
             .then((res) => {
                 const datas = JSON.parse(res.data.facility_name);
                 setFacility(datas.join(', '));
             })
             .catch((err) => console.error(err));
-    }, []);
+    }, [id]);
 
     const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
@@ -202,11 +219,11 @@ export default function BookingForm() {
                 <div className='flex flex-col justify-center items-start px-6 py-4'>
                     <h5 className='text-lg mb-2'>Login dengan : </h5>
                     <div className='flex gap-4'>
-                        <a className='w-32 h-10 flex items-center justify-center border' href='/login'>
+                        <Link href='/login' className='w-32 h-10 flex items-center justify-center border'>
                             <span className='me-2'>Login</span>
                             <FaUserCircle className='text-xl' />{' '}
-                        </a>
-                        <a className='w-32 h-10 flex items-center justify-center border' href='http://127.0.0.1:8000/api/auth/google/redirect'>
+                        </Link>
+                        <a className='w-32 h-10 flex items-center justify-center border' href={`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://127.0.0.1:8000/api'}/auth/google/redirect`}>
                             <span className='me-2'>Google</span> <FcGoogle className='text-xl' />{' '}
                         </a>
                     </div>

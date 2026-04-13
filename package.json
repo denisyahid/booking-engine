@@ -2,13 +2,12 @@
     "name": "najjohotels",
     "private": true,
     "version": "0.0.0",
-    "type": "module",
     "scripts": {
         "format": "npx prettier --write .",
-        "dev": "vite",
-        "build": "vite build",
-        "lint": "eslint .",
-        "preview": "vite preview"
+        "dev": "next dev",
+        "build": "next build",
+        "lint": "next lint",
+        "start": "next start"
     },
     "dependencies": {
         "@react-oauth/google": "^0.12.2",
@@ -16,6 +15,7 @@
         "date-fns": "^4.1.0",
         "framer-motion": "^12.23.12",
         "lucide-react": "^0.542.0",
+        "next": "^16.2.3",
         "react": "^19.1.1",
         "react-date-range": "^2.0.1",
         "react-dom": "^19.1.1",

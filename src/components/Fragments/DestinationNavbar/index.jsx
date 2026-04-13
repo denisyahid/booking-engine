@@ -1,5 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import Link from 'next/link';
 
 export default function DestinationNavbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -16,18 +19,18 @@ export default function DestinationNavbar() {
 
                     {/* Menu Desktop */}
                     <div className='hidden md:flex space-x-6 items-center'>
-                        <a href='/' className='text-gray-700 hover:text-blue-600'>
+                        <Link href='/' className='text-gray-700 hover:text-blue-600'>
                             Hotels
-                        </a>
-                        <a href='/destination' className='text-gray-700 hover:text-blue-600'>
+                        </Link>
+                        <Link href='/destination' className='text-gray-700 hover:text-blue-600'>
                             Destination
-                        </a>
-                        <a href='/login' className='px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 transition'>
+                        </Link>
+                        <Link href='/login' className='px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 transition'>
                             Log In
-                        </a>
-                        <a href='/register' className='px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition'>
+                        </Link>
+                        <Link href='/register' className='px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition'>
                             Register
-                        </a>
+                        </Link>
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -43,18 +46,18 @@ export default function DestinationNavbar() {
             {isOpen && (
                 <div className='md:hidden bg-white border-t shadow-sm'>
                     <div className='px-4 py-3 space-y-3'>
-                        <a href='#hotels' className='block text-gray-700 hover:text-blue-600'>
+                        <Link href='/[slug]' as='/' className='block text-gray-700 hover:text-blue-600'>
                             Hotels
-                        </a>
-                        <a href='#destination' className='block text-gray-700 hover:text-blue-600'>
+                        </Link>
+                        <Link href='/destination' className='block text-gray-700 hover:text-blue-600'>
                             Destination
-                        </a>
-                        <a href='#login' className='block px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 transition'>
+                        </Link>
+                        <Link href='/login' className='block px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 transition'>
                             Log In
-                        </a>
-                        <a href='#register' className='block px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition'>
+                        </Link>
+                        <Link href='/register' className='block px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition'>
                             Register
-                        </a>
+                        </Link>
                     </div>
                 </div>
             )}

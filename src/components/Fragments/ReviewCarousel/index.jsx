@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ReviewSummary from '../../Elements/ReviewSummary';
-import axios from 'axios';
 import ErrorElement from '../../Elements/ErrorElement';
+import { contentAPI } from '../../../services/api';
 
 export default function ReviewCarousel({ slug }) {
     const [reviews, setReviews] = useState([]);
@@ -33,10 +33,9 @@ export default function ReviewCarousel({ slug }) {
     }
 
     useEffect(() => {
-        axios
-            .get(`http://127.0.0.1:8000/api/${slug}/review`)
+        contentAPI.reviews(slug)
             .then((res) => {
-                setReviews(res.data?.hotel_review ?? []);
+                setReviews(res.data ?? []);
             })
             .catch(() => setReviews([]));
     }, [slug]);

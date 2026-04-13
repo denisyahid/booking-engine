@@ -1,18 +1,22 @@
-import axios from 'axios';
 import {  Utensils, Landmark, Mountain,Coffee } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import ErrorElement from '../../Elements/ErrorElement';
 import ExperiencesSection from '../ExperiencesSection';
+import { contentAPI } from '../../../services/api';
 
 export default function LocationSection({hotel,slug,destinations}) {
     const [nearby, setNearby] = useState([]);
 
 
     useEffect(() => {
-        axios.get(`http://127.0.0.1:8000/api/${slug}/nearby`).then((res) => {
-            setNearby(res.data);
-        });
-    }, []);
+        contentAPI.nearby(slug)
+            .then((res) => {
+                setNearby(res.data);
+            })
+            .catch(() => {
+                setNearby([]);
+            });
+    }, [slug]);
 
     const iconMap = {
         utensils: <Utensils className='w-4 h-4 text-orange-500' />,

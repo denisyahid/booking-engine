@@ -1,7 +1,9 @@
+'use client';
+
 import axios from 'axios';
 import { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
 import { Play } from 'lucide-react'; // ikon play
+import Link from 'next/link';
 
 // 🔹 Komponen video card terpisah
 function VideoCard({ videoSrc,slug,image }) {
@@ -10,28 +12,27 @@ function VideoCard({ videoSrc,slug,image }) {
 
     return (
         <div className='relative w-full aspect-square bg-gray-200 overflow-hidden shadow-sm'>
-            <img className='w-full h-full object-cover' src={image} alt="" />
+            <img className='w-full h-full object-cover' src={image} alt='' />
             <video ref={videoRef} className='w-full h-full object-cover' src={videoSrc} controls={false} />
             {!isPlaying && (
-                <a href={`/destination/${slug}`} className='absolute inset-0 flex items-center justify-center'>
-                </a>
+                <Link href={`/destination/${slug}`} className='absolute inset-0 flex items-center justify-center'>
+                </Link>
             )}
         </div>
     );
 }
 
-export default function ExperiencesSection({ destinations = [] }) {
+export default function ExperiencesSection({ destinations = [], slug }) {
     const [visibleCount] = useState(6);
-    const { slug } = useParams();
 
     return (
         <section className='w-full max-w-6xl mx-auto py-8'>
             {/* Header */}
             <div className='flex items-center justify-between py-8 mb-4'>
                 <h2 className='text-lg md:text-xl font-semibold text-gray-800'>Experiences waiting for you</h2>
-                <a href={`/destination`} className='text-blue-600 text-md font-medium hover:underline'>
+                <Link href={`/destination`} className='text-blue-600 text-md font-medium hover:underline'>
                     Lihat semua
-                </a>
+                </Link>
             </div>
 
             {/* Grid Items */}

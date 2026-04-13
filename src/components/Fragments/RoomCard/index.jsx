@@ -2,26 +2,28 @@ import { useEffect, useState } from 'react';
 import { FaUser, FaBed, FaSmokingBan } from 'react-icons/fa';
 import Facilities from '../../Elements/Facilities';
 import RoomOpt from '../../Elements/RoomOpt';
-import axios from 'axios';
 import Carousel from '../../Elements/Carousel';
 import ErrorElement from '../../Elements/ErrorElement';
+import { rateAPI } from '../../../services/api';
 
 export default function RoomCard({ handleBook, rooms, loading, formatRupiah, checkIn, checkOut,roomImages }) {
     const [roomRates, setRoomRates] = useState([]);
     const [specialPrice, setSpecialPrice] = useState([]);
 
     useEffect(() => {
-        axios.get('http://127.0.0.1:8000/api/room/rate/date').then((res) => {
-            setRoomRates(res.data); // sudah ada min_price dari backend
-        });
+        rateAPI.roomRateDates()
+            .then((res) => {
+                setRoomRates(res.data); // sudah ada min_price dari backend
+            })
+            .catch(() => {
+                setRoomRates([]);
+            });
     }, []);
 
     // Fetch rates sesuai tanggal
     const fetchRates = async () => {
         try {
-            const res = await axios.get(`http://127.0.0.1:8000/api/specialrate`, {
-                params: { checkin: checkIn },
-            });
+            const res = await rateAPI.specialRates();
             setSpecialPrice(res.data);
         } catch (err) {
             console.error(err);
