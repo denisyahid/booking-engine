@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
-import { bookingAPI, paymentAPI } from '../../../src/services/api';
+import { useParams } from 'next/navigation';
+import { bookingAPI } from '../../../src/services/api';
 import Navbar from '../../../components/Fragments/Navbar/index';
 import Footer from '../../../components/Fragments/Footer';
 import Link from 'next/link';
@@ -10,20 +10,18 @@ import { Calendar, Mail, Phone, User, FileText, CreditCard, ArrowLeft, CheckCirc
 
 export default function BookingDetailPage() {
     const params = useParams();
-    const router = useRouter();
     const code = params.code;
 
     const [booking, setBooking] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [processingPayment, setProcessingPayment] = useState(false);
 
     useEffect(() => {
         if (!code) return;
 
         bookingAPI.getByCode(code)
             .then((res) => {
-                setBooking(res.data);
+                setBooking(res.data.data || null);
                 setLoading(false);
             })
             .catch((err) => {
@@ -32,42 +30,6 @@ export default function BookingDetailPage() {
                 setLoading(false);
             });
     }, [code]);
-
-    const handlePayNow = async () => {
-        setProcessingPayment(true);
-        try {
-            const bookingId = booking.invoice_number?.replace('NAJ', '');
-            const response = await paymentAPI.createSnap({ booking_id: bookingId });
-            const { token, redirect_url } = response.data.data;
-
-            if (window.snap) {
-                window.snap.pay(token, {
-                    onSuccess: (result) => {
-                        console.log('Payment Success:', result);
-                        window.location.reload();
-                    },
-                    onPending: (result) => {
-                        console.log('Payment Pending:', result);
-                        window.location.reload();
-                    },
-                    onError: (result) => {
-                        console.log('Payment Error:', result);
-                        alert('Payment failed. Please try again.');
-                        setProcessingPayment(false);
-                    },
-                    onClose: () => {
-                        setProcessingPayment(false);
-                    },
-                });
-            } else {
-                window.location.href = redirect_url;
-            }
-        } catch (err) {
-            console.error('Payment error:', err);
-            alert('Failed to initiate payment. Please try again.');
-            setProcessingPayment(false);
-        }
-    };
 
     const formatDate = (dateString) => {
         if (!dateString) return '-';
@@ -172,7 +134,7 @@ export default function BookingDetailPage() {
                     <div className='flex items-center justify-between'>
                         <div>
                             <h1 className='text-3xl font-bold text-gray-900 mb-2'>Booking Details</h1>
-                            <p className='text-gray-600'>Invoice: {booking.invoice_number}</p>
+                            <p className='text-gray-600'>Booking: {booking.booking_code || code}</p>
                         </div>
                         <div className='flex gap-2'>
                             {getStatusBadge(booking.status)}
@@ -198,7 +160,7 @@ export default function BookingDetailPage() {
                                     </div>
                                     <div>
                                         <p className='text-sm text-gray-500'>Full Name</p>
-                                        <p className='font-medium'>{booking.fullname}</p>
+                                        <p className='font-medium'>{booking.guest_name || '-'}</p>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-2 gap-4'>
@@ -213,7 +175,7 @@ export default function BookingDetailPage() {
                                         <Phone className='w-4 h-4 text-gray-400' />
                                         <div>
                                             <p className='text-sm text-gray-500'>Phone</p>
-                                            <p className='font-medium'>{booking.mobile_number || '-'}</p>
+                                        <p className='font-medium'>{booking.mobile_number || '-'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -273,12 +235,11 @@ export default function BookingDetailPage() {
                                 <p className='text-yellow-700 mb-4'>
                                     Your booking is waiting for payment. Please complete the payment to confirm your reservation.
                                 </p>
-                                <button
-                                    onClick={handlePayNow}
-                                    disabled={processingPayment}
-                                    className='w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition disabled:opacity-50'>
-                                    {processingPayment ? 'Processing...' : 'Pay Now'}
-                                </button>
+                                <Link
+                                    href={`/payment-gateway/${booking.booking_code || code}`}
+                                    className='block w-full text-center bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition'>
+                                    Open Payment Gateway
+                                </Link>
                             </div>
                         ) : booking.payment_status === 'paid' ? (
                             <div className='bg-green-50 border border-green-200 rounded-lg p-6'>

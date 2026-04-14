@@ -23,6 +23,7 @@ import Advantage from '../../components/Fragments/Advantage';
 import Facilities from '../../components/Fragments/PopularFacilities';
 import Policies from '../../components/Fragments/Policies';
 import FAQ from '../../components/Fragments/FAQ';
+import FloatingAssistant from '../../components/Fragments/FloatingAssistant';
 
 const HotelPage = ({ params }) => {
     const resolvedParams = use(params);
@@ -230,8 +231,6 @@ const HotelPage = ({ params }) => {
                 range={range}
                 onCheckComplete={setAvailableRooms}
             />
-            <BioHotel hotel={hotel} images={hotelImages} />
-
             {/* Available Rooms (muncul setelah check availability) */}
             {availableRooms.length > 0 && (
                 <AvailableRooms
@@ -241,6 +240,7 @@ const HotelPage = ({ params }) => {
                     hotelSlug={slug}
                 />
             )}
+            <BioHotel hotel={hotel} images={hotelImages} />
 
             {(!hasSearchParams || rooms) && <Hero discount={roomRateDates} roomsByHotel={discountRoom} rooms={discountRoom} roomImages={roomImages} />}
             <RoomCard
@@ -263,6 +263,7 @@ const HotelPage = ({ params }) => {
             <AboutSection description={hotel.description} title={hotel.name} />
             <FAQ slug={slug} />
             <Footer hotel={hotel} />
+            <FloatingAssistant />
         </div>
     );
 };

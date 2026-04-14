@@ -1,8 +1,17 @@
 import ErrorElement from '../../Elements/ErrorElement';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../../src/context/AuthContext';
 
 export default function Navbar({hotel}) {
     const [open, setOpen] = useState(false);
+    const router = useRouter();
+    const { isAuthenticated, logout } = useAuth();
+
+    const handleLogout = async () => {
+        await logout();
+        router.push('/login');
+    };
 
     // If no hotel prop provided, show generic navbar
     if (!hotel || !hotel.name) {
@@ -16,8 +25,23 @@ export default function Navbar({hotel}) {
                         <nav className='hidden md:flex space-x-6'>
                             <a href='/hotels' className='text-gray-700 hover:text-blue-600 font-medium'>Hotels</a>
                             <a href='/destination' className='text-gray-700 hover:text-blue-600 font-medium'>Destination</a>
-                            <a href='/login' className='px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 transition'>Log In</a>
-                            <a href='/register' className='px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition'>Register</a>
+                            {isAuthenticated ? (
+                                <>
+                                    <a href='/my-bookings' className='text-gray-700 hover:text-blue-600 font-medium'>My Bookings</a>
+                                    <a href='/profile' className='text-gray-700 hover:text-blue-600 font-medium'>Profile</a>
+                                    <button
+                                        type='button'
+                                        onClick={handleLogout}
+                                        className='px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 transition'>
+                                        Logout
+                                    </button>
+                                </>
+                            ) : (
+                                <>
+                                    <a href='/login' className='px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-100 transition'>Log In</a>
+                                    <a href='/register' className='px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 transition'>Register</a>
+                                </>
+                            )}
                         </nav>
                     </div>
                 </div>

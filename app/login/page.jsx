@@ -1,12 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI } from '../../src/services/api';
+import { useAuth } from '../../src/context/AuthContext';
 
 export default function LoginPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const { isAuthenticated, loading: authLoading } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
@@ -14,6 +18,12 @@ export default function LoginPage() {
     const [forgotEmail, setForgotEmail] = useState('');
     const [showForgot, setShowForgot] = useState(false);
     const [forgotMessage, setForgotMessage] = useState('');
+
+    useEffect(() => {
+        if (!authLoading && isAuthenticated) {
+            router.replace('/my-bookings');
+        }
+    }, [authLoading, isAuthenticated, router]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -27,8 +37,8 @@ export default function LoginPage() {
             localStorage.setItem('auth_token', token);
             localStorage.setItem('user', JSON.stringify(user));
 
-            // Redirect to destination or home
-            router.push('/destination');
+            const redirectTo = searchParams.get('redirect');
+            router.push(redirectTo || '/booking-engine');
         } catch (err) {
             if (err.response?.status === 401) {
                 setError('Email atau password salah');

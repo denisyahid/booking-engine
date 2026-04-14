@@ -1,20 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter, useParams, useSearchParams } from 'next/navigation';
+import { useRouter, useParams, useSearchParams, usePathname } from 'next/navigation';
 import axios from 'axios';
 import { Loader2, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
 import Navbar from '../../../components/Fragments/Navbar';
 import Footer from '../../../components/Fragments/Footer';
+import { bookingAPI } from '../../../src/services/api';
+import { useAuth } from '../../../src/context/AuthContext';
 
 export default function GuestBookingPage() {
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
+    const pathname = usePathname();
     const roomId = params.id;
+    const { user, isAuthenticated, loading: authLoading } = useAuth();
 
     // Get booking data from URL
     const subroomId = searchParams.get('subroom_id');
+    const selectedRoomId = searchParams.get('room_id');
     const rateId = searchParams.get('rate_id');
     const rateName = searchParams.get('rate_name');
     const checkIn = searchParams.get('check_in');
@@ -23,11 +28,11 @@ export default function GuestBookingPage() {
     const totalPrice = parseInt(searchParams.get('total_price')) || 0;
     const nights = parseInt(searchParams.get('nights')) || 1;
 
-    const [loading, setLoading] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [bookingData, setBookingData] = useState(null);
+    const [createdBookingCode, setCreatedBookingCode] = useState('');
     const [hotelInfo, setHotelInfo] = useState(null);
 
     // Form state
@@ -38,6 +43,28 @@ export default function GuestBookingPage() {
         phone: '',
         special_request: '',
     });
+
+    // Booking page requires login first, then continue booking flow
+    useEffect(() => {
+        if (authLoading) return;
+        if (!isAuthenticated) {
+            const query = searchParams.toString();
+            const redirectTarget = query ? `${pathname}?${query}` : pathname;
+            router.replace(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
+        }
+    }, [authLoading, isAuthenticated, pathname, router, searchParams]);
+
+    // Autofill guest data from logged-in account
+    useEffect(() => {
+        if (user) {
+            setForm((prev) => ({
+                ...prev,
+                full_name: user.full_name || prev.full_name,
+                email: user.email || prev.email,
+                phone: user.phone_number || prev.phone,
+            }));
+        }
+    }, [user]);
 
     // Fetch hotel info
     useEffect(() => {
@@ -66,22 +93,21 @@ export default function GuestBookingPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!isAuthenticated) {
+            const query = searchParams.toString();
+            const redirectTarget = query ? `${pathname}?${query}` : pathname;
+            router.push(`/login?redirect=${encodeURIComponent(redirectTarget)}`);
+            return;
+        }
         setSubmitting(true);
         setError('');
 
         try {
-            // Get CSRF token first
-            await axios.get('http://127.0.0.1:8000/sanctum/csrf-cookie', {
-                withCredentials: true,
-            });
-
-            // Wait a bit for cookie to be set
-            await new Promise(resolve => setTimeout(resolve, 100));
-
             // Create booking
-            const response = await axios.post('http://127.0.0.1:8000/api/post/booking', {
-                room_id: parseInt(roomId),
+            const response = await bookingAPI.createLegacy({
+                room_id: parseInt(selectedRoomId || roomId),
                 subroom_id: subroomId ? parseInt(subroomId) : null,
+                rate_id: rateId ? parseInt(rateId) : null,
                 title: form.title,
                 fullname: form.full_name,
                 email: form.email,
@@ -93,17 +119,13 @@ export default function GuestBookingPage() {
                 adult: 1,
                 children: 0,
                 roomQuantity: 1,
-            }, {
-                withCredentials: true,
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest',
-                },
             });
 
             if (response.data.success) {
-                setBookingData(response.data.booking);
+                const booking = response.data.booking;
+                const bookingCode = booking.invoice_number || booking.booking_code || '';
+                setBookingData(booking);
+                setCreatedBookingCode(bookingCode);
                 setSuccess(true);
             } else {
                 setError(response.data.message || 'Failed to create booking');
@@ -160,11 +182,19 @@ export default function GuestBookingPage() {
                                 </div>
                             </div>
                             <div className='flex gap-3 mt-6'>
-                                <button
-                                    onClick={() => router.push(`/my-bookings/${bookingData.invoice_number || bookingData.booking_code || bookingData.id}`)}
-                                    className='flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition'>
-                                    View Booking Details
-                                </button>
+                                {createdBookingCode && (
+                                    <button
+                                        onClick={() =>
+                                            router.push(
+                                                isAuthenticated
+                                                    ? `/payment-gateway/${createdBookingCode}`
+                                                    : `/login?redirect=${encodeURIComponent(`/payment-gateway/${createdBookingCode}`)}`
+                                            )
+                                        }
+                                        className='flex-1 bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition'>
+                                        Continue to Payment
+                                    </button>
+                                )}
                                 <button
                                     onClick={() => router.push('/')}
                                     className='flex-1 bg-gray-200 text-gray-800 py-3 rounded-lg font-semibold hover:bg-gray-300 transition'>

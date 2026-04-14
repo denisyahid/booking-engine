@@ -51,8 +51,8 @@ export default function RegisterPage() {
             localStorage.setItem('auth_token', token);
             localStorage.setItem('user', JSON.stringify(user));
 
-            // Redirect to destination after successful registration
-            router.push('/destination');
+            // Redirect to booking engine dashboard after successful registration
+            router.push('/booking-engine');
         } catch (err) {
             if (err.response?.status === 422) {
                 const errors = err.response.data.errors;

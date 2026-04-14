@@ -17,6 +17,7 @@ export default function AvailableRooms({ rooms, checkIn, checkOut, hotelSlug }) 
     };
 
     const handleBookNow = (room) => {
+        const selectedRate = room.selected_rate || room.rates?.[0] || {};
         const queryParams = new URLSearchParams({
             subroom_id: room.subroom_id,
             room_id: room.room_id,
@@ -25,8 +26,8 @@ export default function AvailableRooms({ rooms, checkIn, checkOut, hotelSlug }) 
             price_per_night: room.price_per_night,
             total_price: room.total_price,
             nights: room.nights,
-            rate_id: room.rates?.[0]?.id || '',
-            rate_name: room.rates?.[0]?.name || 'Standard',
+            rate_id: selectedRate.id || '',
+            rate_name: selectedRate.name || 'Standard',
         }).toString();
         router.push(`/booking/${room.room_id}?${queryParams}`);
     };
@@ -51,8 +52,8 @@ export default function AvailableRooms({ rooms, checkIn, checkOut, hotelSlug }) 
                 {/* Rooms Grid */}
                 <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
                     {rooms.map((room) => {
-                        const lowestRate = room.rates?.[0] || {};
-                        const hasMultipleRates = room.rates && room.rates.length > 1;
+                        const selectedRate = room.selected_rate || room.rates?.[0] || {};
+                        const hasDiscount = !!room.discount;
 
                         return (
                             <div
@@ -76,7 +77,12 @@ export default function AvailableRooms({ rooms, checkIn, checkOut, hotelSlug }) 
 
                                     {/* Price Badge */}
                                     <div className='absolute top-3 right-3 bg-white px-3 py-2 rounded-lg shadow-lg'>
-                                        <p className='text-xs text-gray-500'>From</p>
+                                        <p className='text-xs text-gray-500'>Price/Night</p>
+                                        {hasDiscount && (
+                                            <p className='text-xs text-gray-400 line-through'>
+                                                {formatRupiah(room.base_price_per_night)}
+                                            </p>
+                                        )}
                                         <p className='text-lg font-bold text-blue-600'>
                                             {formatRupiah(room.price_per_night)}
                                         </p>
@@ -103,27 +109,29 @@ export default function AvailableRooms({ rooms, checkIn, checkOut, hotelSlug }) 
                                             <FaUser className='w-4 h-4' />
                                             <span>{room.max_guests} Guests</span>
                                         </div>
-                                        {hasMultipleRates && (
+                                        {selectedRate?.name && (
                                             <div className='text-blue-600 font-semibold'>
-                                                {room.rates.length} rate options
+                                                {selectedRate.name}
                                             </div>
                                         )}
                                     </div>
 
-                                    {/* Rate Options (if multiple) */}
-                                    {hasMultipleRates && (
+                                    {/* Selected rate & discount */}
+                                    {selectedRate?.name && (
                                         <div className='mb-4 p-3 bg-gray-50 rounded-lg'>
-                                            <p className='text-xs text-gray-500 mb-2'>Available Rates:</p>
-                                            <div className='space-y-1'>
-                                                {room.rates.slice(0, 3).map((rate) => (
-                                                    <div key={rate.id} className='flex justify-between text-sm'>
-                                                        <span className='text-gray-700'>{rate.name}</span>
-                                                        <span className='font-semibold text-gray-900'>
-                                                            {formatRupiah(rate.price)}
-                                                        </span>
-                                                    </div>
-                                                ))}
+                                            <p className='text-xs text-gray-500 mb-2'>Rate yang dipakai:</p>
+                                            <div className='flex justify-between text-sm'>
+                                                <span className='text-gray-700'>{selectedRate.name}</span>
+                                                <span className='font-semibold text-gray-900'>
+                                                    {formatRupiah(selectedRate.price || room.base_price_per_night || room.price_per_night)}
+                                                </span>
                                             </div>
+                                            {hasDiscount && (
+                                                <div className='mt-2 flex justify-between text-sm text-green-700'>
+                                                    <span>{room.discount.name} ({room.discount.percent}%)</span>
+                                                    <span>-{formatRupiah(room.discount.amount)}</span>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
 

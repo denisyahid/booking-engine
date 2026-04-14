@@ -119,7 +119,8 @@ export const destinationAPI = {
 // ==================== BOOKING API ====================
 export const bookingAPI = {
   create: (data) => api.post('/public/bookings', data),
-  createLegacy: (data) => api.post('/post/booking', data),
+  // Legacy callers now use public endpoint to avoid CSRF issues on /post/booking
+  createLegacy: (data) => api.post('/public/bookings', data),
   getByCode: (code) => api.get(`/public/bookings/${code}`),
   getMyBookings: (params) => api.get('/public/bookings/my', { params }),
 };
