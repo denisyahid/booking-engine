@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, use } from 'react';
+import React, { useEffect, useState, use, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Hero from '../../src/Hero';
 import Navbar from '../../components/Fragments/Navbar/index';
@@ -25,7 +25,7 @@ import Policies from '../../components/Fragments/Policies';
 import FAQ from '../../components/Fragments/FAQ';
 import FloatingAssistant from '../../components/Fragments/FloatingAssistant';
 
-const HotelPage = ({ params }) => {
+const HotelPageContent = ({ params }) => {
     const resolvedParams = use(params);
     const slug = resolvedParams.slug;
     const router = useRouter();
@@ -265,6 +265,18 @@ const HotelPage = ({ params }) => {
             <Footer hotel={hotel} />
             <FloatingAssistant />
         </div>
+    );
+};
+
+const HotelPage = ({ params }) => {
+    return (
+        <Suspense fallback={
+            <div className='min-h-screen flex items-center justify-center'>
+                <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-primary'></div>
+            </div>
+        }>
+            <HotelPageContent params={params} />
+        </Suspense>
     );
 };
 

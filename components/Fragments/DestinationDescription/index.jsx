@@ -1,13 +1,15 @@
+'use client';
+
 import { useState } from 'react';
 import { FaMapMarkerAlt, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
 import ReviewSummary from '../../Elements/ReviewSummary';
 import SectionNav from '../../Elements/SectionNav';
 
-export default function DestinationDescription({ destination, reviews, formatRupiah, handleShare }) {
+export default function DestinationDescription({ destination, reviews, facilities }) {
     const [currentReview, setCurrentReview] = useState(0);
     const [showMore, setShowMore] = useState(true);
     const [showFacilities, setShowFacilities] = useState(true);
-    const facilities = destination.destination_facility ? destination.destination_facility.name.split(',') : [];
+    const facilityList = destination.destination_facility ? destination.destination_facility.name.split(',') : [];
     const nextReview = () => {
         setCurrentReview((prev) => (prev + 1) % reviews.length);
     };
@@ -23,6 +25,8 @@ export default function DestinationDescription({ destination, reviews, formatRup
     const handleFacilities = () => {
         setShowFacilities(!showFacilities);
     };
+
+    const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     return (
         <div id='tickets' className='w-full max-w-6xl mx-auto border border-gray-300 m-5 p-4 my-10 flex flex-col lg:flex-row gap-4'>
             {/* Kiri */}
@@ -53,7 +57,7 @@ export default function DestinationDescription({ destination, reviews, formatRup
                     {!showFacilities ? (
                         <ul className='mt-3'>
                             <h5 className='text-primary text-base font-semibold'>Facilities :</h5>
-                            {facilities.map((facility, index) => (
+                            {facilityList.map((facility, index) => (
                                 <li key={index} className='ms-5 text-black list-disc'>
                                     {facility.trim()}
                                 </li>

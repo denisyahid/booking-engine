@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { bookingAPI } from '../../../src/services/api';
 import { Clock, Mail } from 'lucide-react';
 
-export default function BookingPendingPage() {
+function BookingPendingContent() {
     const searchParams = useSearchParams();
     const code = searchParams.get('code') || '';
     const [booking, setBooking] = useState(null);
@@ -96,5 +96,17 @@ export default function BookingPendingPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function BookingPendingPage() {
+    return (
+        <Suspense fallback={
+            <div className='min-h-screen flex items-center justify-center'>
+                <span className='ml-2'>Loading...</span>
+            </div>
+        }>
+            <BookingPendingContent />
+        </Suspense>
     );
 }

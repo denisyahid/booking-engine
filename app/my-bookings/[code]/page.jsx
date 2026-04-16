@@ -8,6 +8,8 @@ import Footer from '../../../components/Fragments/Footer';
 import Link from 'next/link';
 import { Calendar, Mail, Phone, User, FileText, CreditCard, ArrowLeft, CheckCircle, XCircle, Clock } from 'lucide-react';
 
+export const dynamic = 'force-dynamic';
+
 export default function BookingDetailPage() {
     const params = useParams();
     const code = params.code;

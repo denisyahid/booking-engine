@@ -1,36 +1,31 @@
-'use client';
-
-import { useEffect, useState, use } from 'react';
-import { destinationAPI } from '../../../src/services/api';
 import { ArrowLeft, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
-export default function BlogDetailPage({ params }) {
-    const resolvedParams = use(params);
-    const slug = resolvedParams.slug;
-    const [destination, setDestination] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
+export async function generateStaticParams() {
+    try {
+        const res = await fetch('http://10.108.118.71:8000/api/destination');
+        const destinations = await res.json();
+        return destinations.map((dest) => ({
+            slug: dest.slug,
+        }));
+    } catch (error) {
+        console.error('Error fetching destinations for static params:', error);
+        return [];
+    }
+}
 
-    useEffect(() => {
-        if (slug) {
-            destinationAPI.detail(slug)
-                .then((res) => {
-                    setDestination(res.data);
-                })
-                .catch(() => {
-                    setError('Failed to load destination details');
-                })
-                .finally(() => setLoading(false));
-        }
-    }, [slug]);
+export default async function BlogDetailPage({ params }) {
+    const { slug } = await params;
 
-    if (loading) {
-        return (
-            <div className='min-h-screen flex items-center justify-center'>
-                Loading destination...
-            </div>
-        );
+    let destination = null;
+    let error = false;
+
+    try {
+        const res = await fetch(`http://10.108.118.71:8000/api/destination/${slug}`);
+        if (!res.ok) throw new Error('Not found');
+        destination = await res.json();
+    } catch {
+        error = true;
     }
 
     if (error || !destination) {

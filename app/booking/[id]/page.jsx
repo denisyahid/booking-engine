@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useParams, useSearchParams, usePathname } from 'next/navigation';
 import axios from 'axios';
 import { Loader2, CheckCircle, XCircle, ArrowLeft } from 'lucide-react';
@@ -9,7 +9,7 @@ import Footer from '../../../components/Fragments/Footer';
 import { bookingAPI } from '../../../src/services/api';
 import { useAuth } from '../../../src/context/AuthContext';
 
-export default function GuestBookingPage() {
+function GuestBookingPageContent() {
     const router = useRouter();
     const params = useParams();
     const searchParams = useSearchParams();
@@ -386,5 +386,18 @@ export default function GuestBookingPage() {
             </div>
             <Footer />
         </>
+    );
+}
+
+export default function GuestBookingPage() {
+    return (
+        <Suspense fallback={
+            <div className='min-h-screen flex items-center justify-center'>
+                <Loader2 className='animate-spin text-primary w-8 h-8' />
+                <span className='ml-2'>Loading booking form...</span>
+            </div>
+        }>
+            <GuestBookingPageContent />
+        </Suspense>
     );
 }

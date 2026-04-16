@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { authAPI } from '../../src/services/api';
 import { useAuth } from '../../src/context/AuthContext';
 
-export default function LoginPage() {
+function LoginPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { isAuthenticated, loading: authLoading } = useAuth();
@@ -200,5 +200,17 @@ export default function LoginPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={
+            <div className='min-h-screen flex items-center justify-center'>
+                <div className='animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600'></div>
+            </div>
+        }>
+            <LoginPageContent />
+        </Suspense>
     );
 }

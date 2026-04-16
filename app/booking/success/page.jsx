@@ -1,12 +1,12 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { bookingAPI } from '../../../src/services/api';
 import { CheckCircle, Loader2, Mail } from 'lucide-react';
 
-export default function BookingSuccessPage() {
+function BookingSuccessContent() {
     const searchParams = useSearchParams();
     const code = searchParams.get('code') || '';
     const [booking, setBooking] = useState(null);
@@ -106,5 +106,18 @@ export default function BookingSuccessPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function BookingSuccessPage() {
+    return (
+        <Suspense fallback={
+            <div className='min-h-screen flex items-center justify-center'>
+                <Loader2 className='animate-spin text-primary w-8 h-8' />
+                <span className='ml-2'>Loading...</span>
+            </div>
+        }>
+            <BookingSuccessContent />
+        </Suspense>
     );
 }

@@ -1,4 +1,5 @@
-const GeneralInfo = ({ destination, formatRupiah }) => {
+const GeneralInfo = ({ destination }) => {
+    const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
     return (
         destination.destination_rate && (
             <div id="about" className='w-full max-w-6xl mx-auto py-6 flex my-10'>

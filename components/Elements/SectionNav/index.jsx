@@ -1,7 +1,9 @@
+'use client';
+
 import { Share2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-const SectionNav = ({ onShare }) => {
+const SectionNav = ({ destination }) => {
     const sections = [
         { id: 'overview', label: 'Overview' },
         { id: 'tickets', label: 'Ticket Options' },
@@ -36,7 +38,29 @@ const SectionNav = ({ onShare }) => {
     return () => observer.disconnect();
 }, []);
 
+    const handleShare = async () => {
+        const shareData = {
+            title: destination?.name || 'Destination',
+            text: `Yuk cek destinasi menarik: ${destination?.name}!`,
+            url: window.location.href,
+        };
 
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+                console.log('Berhasil share!');
+            } catch (error) {
+                console.error('Gagal share:', error);
+            }
+        } else {
+            try {
+                await navigator.clipboard.writeText(shareData.url);
+                alert('Link telah disalin ke clipboard!');
+            } catch (error) {
+                console.error('Clipboard error:', error);
+            }
+        }
+    };
 
     const handleClick = (id) => {
         const el = document.getElementById(id);
@@ -60,7 +84,7 @@ const SectionNav = ({ onShare }) => {
                         </button>
                     ))}
                 </div>
-                <button onClick={onShare} className='ml-4 p-2 rounded-full hover:bg-gray-100 text-gray-600'>
+                <button onClick={handleShare} className='ml-4 p-2 rounded-full hover:bg-gray-100 text-gray-600'>
                     <Share2 className='w-5 h-5' />
                 </button>
             </div>

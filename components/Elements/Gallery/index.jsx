@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from 'react';
 
 export default function Gallery({ images = [], width = 'w-1/2', height = 'h-[320px]' }) {

@@ -1,7 +1,3 @@
-'use client';
-
-import { useEffect, useState, use } from 'react';
-import { destinationAPI } from '../../../src/services/api';
 import DestinationNavbar from '../../../components/Fragments/DestinationNavbar';
 import DestinationInfo from '../../../components/Fragments/DestinationInfo';
 import DestinationDescription from '../../../components/Fragments/DestinationDescription';
@@ -12,107 +8,65 @@ import SectionNav from '../../../components/Elements/SectionNav';
 import DestinationFaq from '../../../components/Elements/DestinationFaq';
 import Footer from '../../../components/Fragments/Footer';
 
-const DestinationDetail = ({ params }) => {
-    const resolvedParams = use(params);
-    const slug = resolvedParams.slug;
-    const [destination, setDestination] = useState({});
-    const [destinationImages, setDestinationImages] = useState([]);
-    const [destinationReviews, setDestinationReviews] = useState([]);
-    const [nearbyDestinations, setNearbyDestinations] = useState([]);
-    const [guestPhotos, setGuestPhotos] = useState([]);
-    const [destinationFacilities,setDestinationFacilities] = useState([]);
-    const [destinationFaqs,setDestinationFaqs] = useState([]);
+export async function generateStaticParams() {
+    try {
+        const res = await fetch('http://10.108.118.71:8000/api/destination');
+        const destinations = await res.json();
+        return destinations.map((dest) => ({
+            slug: dest.slug,
+        }));
+    } catch (error) {
+        console.error('Error fetching destinations for static params:', error);
+        return [];
+    }
+}
 
-    useEffect(() => {
-        destinationAPI.detail(slug).then((res) => {
-            setDestination(res.data);
-            console.log(res.data)
-        });
-    }, []);
+export default async function DestinationDetail({ params }) {
+    const { slug } = await params;
 
-    useEffect(() => {
-        destinationAPI.images(slug).then((res) => {
-            console.log('🖼️ Destination images:', res.data);
-            // Images are now full URLs from backend
-            const images = res.data.map((data) => data.image);
-            setDestinationImages(images);
-        }).catch((err) => {
-            console.error('❌ Error fetching images:', err);
-            setDestinationImages([]);
-        });
-    }, [slug]);
+    try {
+        const [detailRes, imagesRes, reviewsRes, nearbyRes, guestRes, facilitiesRes, faqRes] = await Promise.all([
+            fetch(`http://10.108.118.71:8000/api/destination/${slug}`),
+            fetch(`http://10.108.118.71:8000/api/destination/image/${slug}`),
+            fetch(`http://10.108.118.71:8000/api/destination/review/${slug}`),
+            fetch(`http://10.108.118.71:8000/api/destination/nearby/${slug}`),
+            fetch(`http://10.108.118.71:8000/api/destination/guest/${slug}`),
+            fetch(`http://10.108.118.71:8000/api/destination/facility/${slug}`),
+            fetch(`http://10.108.118.71:8000/api/destination/faq/${slug}`),
+        ]);
 
-    useEffect(() => {
-        destinationAPI.reviews(slug).then((res) => {
-            setDestinationReviews(res.data);
-        });
-    }, []);
+        const destination = await detailRes.json();
+        const destinationImages = (await imagesRes.json()).map(d => d.image);
+        const destinationReviews = await reviewsRes.json();
+        const nearbyDestinations = await nearbyRes.json();
+        const guestPhotos = await guestRes.json();
+        const destinationFacilities = await facilitiesRes.json();
+        const destinationFaqs = await faqRes.json();
 
-    useEffect(() => {
-        destinationAPI.nearby(slug).then((res) => {
-            setNearbyDestinations(res.data);
-        });
-    }, []);
-
-    useEffect(() => {
-        destinationAPI.guestPhotos(slug).then((res) => {
-            setGuestPhotos(res.data);
-        });
-    }, []);
-
-    useEffect(() => {
-        destinationAPI.facilities(slug)
-        .then((res) => {
-            setDestinationFacilities(res.data)
-        })
-    },[])
-
-    useEffect(() => {
-        destinationAPI.faq(slug)
-        .then((res) => {
-            setDestinationFaqs(res.data)
-        })
-    },[])
-
-    const formatRupiah = (num) => 'IDR ' + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-    const handleShare = async () => {
-        const shareData = {
-            title: destination?.name || 'Destination',
-            text: `Yuk cek destinasi menarik: ${destination?.name}!`,
-            url: window.location.href,
-        };
-
-        if (navigator.share) {
-            try {
-                await navigator.share(shareData);
-                console.log('Berhasil share!');
-            } catch (error) {
-                console.error('Gagal share:', error);
-            }
-        } else {
-            try {
-                await navigator.clipboard.writeText(shareData.url);
-                alert('Link telah disalin ke clipboard!');
-            } catch (error) {
-                console.error('Clipboard error:', error);
-            }
-        }
-    };
-
-    return (
-        <div className='h-max'>
-            <DestinationNavbar />
-            <DestinationInfo destination={destination} destinationImages={destinationImages} />
-            <SectionNav onShare={handleShare} />
-            <DestinationDescription handleShare={handleShare} formatRupiah={formatRupiah} destination={destination} reviews={destinationReviews} facilities={destinationFacilities} />
-            <GuestPhotos guestPhotos={guestPhotos} />
-            <GeneralInfo destination={destination} formatRupiah={formatRupiah} />
-            <ExperiencesSection destinations={nearbyDestinations} />
-            <DestinationFaq faq={destinationFaqs} />
-            <Footer hotel={destination} />
-        </div>
-    );
-};
-
-export default DestinationDetail;
+        return (
+            <div className='h-max'>
+                <DestinationNavbar />
+                <DestinationInfo destination={destination} destinationImages={destinationImages} />
+                <SectionNav destination={destination} />
+                <DestinationDescription destination={destination} reviews={destinationReviews} facilities={destinationFacilities} />
+                <GuestPhotos guestPhotos={guestPhotos} />
+                <GeneralInfo destination={destination} />
+                <ExperiencesSection destinations={nearbyDestinations} />
+                <DestinationFaq faq={destinationFaqs} />
+                <Footer hotel={destination} />
+            </div>
+        );
+    } catch (error) {
+        console.error('Error fetching destination data:', error);
+        return (
+            <div className='min-h-screen bg-gray-100 flex items-center justify-center py-12 px-4'>
+                <div className='max-w-lg w-full bg-white rounded-lg shadow-lg p-8 text-center'>
+                    <h1 className='text-2xl font-bold text-gray-800 mb-4'>Destination Not Found</h1>
+                    <p className='text-gray-600 mb-6'>
+                        The destination you&apos;re looking for doesn&apos;t exist or has been removed.
+                    </p>
+                </div>
+            </div>
+        );
+    }
+}
